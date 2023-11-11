@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.MockMvcBuilder.*;
@@ -358,6 +359,246 @@ class EmployeeControllerTest {
 
             Employee employeeTest = employeesRepository.findById(employee.getEmpNo()).orElse(null);
             assertNotNull(employeeTest);
+
+        });
+    }
+
+    @Test
+    void findAllEmployeeSuccess() throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+
+
+        for (int i = 0; i < 100; i++) {
+            Employee employee = new Employee();
+            employee.setBirthDate(sdf.parse("1998-09-11"));
+            employee.setFirstName("Bagas");
+            employee.setLastName("Anwar");
+            employee.setGender("M");
+            employee.setHireDate(sdf.parse("2022-09-21"));
+            employeesRepository.save(employee);
+            System.out.println(employee.getEmpNo());
+        }
+
+
+        mockMvc.perform(
+                get("/api/employees/search/all")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<EmployeeResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertEquals(10,response.getData().size());
+            assertEquals(10,response.getPaging().getTotalPage());
+            assertEquals(0,response.getPaging().getCurrentPage());
+            assertEquals(100,response.getPaging().getSize());
+
+
+        });
+    }
+
+    @Test
+    void searchEmployeeSuccess() throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+
+
+        for (int i = 0; i < 100; i++) {
+            Employee employee = new Employee();
+            employee.setBirthDate(sdf.parse("1998-09-11"));
+            employee.setFirstName("Bagas");
+            employee.setLastName("Nur");
+            employee.setGender("M");
+            employee.setHireDate(sdf.parse("2022-09-21"));
+            employeesRepository.save(employee);
+            System.out.println(employee.getEmpNo());
+        }
+
+        for (int i = 0; i < 100; i++) {
+            Employee employee = new Employee();
+            employee.setBirthDate(sdf.parse("2000-01-12"));
+            employee.setFirstName("Nurul");
+            employee.setLastName("Aisyah");
+            employee.setGender("F");
+            employee.setHireDate(sdf.parse("2023-08-22"));
+            employeesRepository.save(employee);
+            System.out.println(employee.getEmpNo());
+        }
+
+
+
+        mockMvc.perform(
+                get("/api/employees/search")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<EmployeeResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertEquals(10,response.getData().size());
+            assertEquals(20,response.getPaging().getTotalPage());
+            assertEquals(0,response.getPaging().getCurrentPage());
+            assertEquals(200,response.getPaging().getSize());
+
+
+        });
+
+        mockMvc.perform(
+                get("/api/employees/search?keyword=Nur")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<EmployeeResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertEquals(10,response.getData().size());
+            assertEquals(20,response.getPaging().getTotalPage());
+            assertEquals(0,response.getPaging().getCurrentPage());
+            assertEquals(200,response.getPaging().getSize());
+
+
+        });
+
+        mockMvc.perform(
+                get("/api/employees/search?keyword=Bag")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<EmployeeResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertEquals(10,response.getData().size());
+            assertEquals(10,response.getPaging().getTotalPage());
+            assertEquals(0,response.getPaging().getCurrentPage());
+            assertEquals(100,response.getPaging().getSize());
+
+
+        });
+
+        mockMvc.perform(
+                get("/api/employees/search?keyword=Bag&page=3")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<EmployeeResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertEquals(10,response.getData().size());
+            assertEquals(10,response.getPaging().getTotalPage());
+            assertEquals(3,response.getPaging().getCurrentPage());
+            assertEquals(100,response.getPaging().getSize());
+
+
+        });
+
+        mockMvc.perform(
+                get("/api/employees/search?keyword=Bag&page=3&size=20")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<EmployeeResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertEquals(20,response.getData().size());
+            assertEquals(5,response.getPaging().getTotalPage());
+            assertEquals(3,response.getPaging().getCurrentPage());
+            assertEquals(100,response.getPaging().getSize());
+
+
+        });
+
+        mockMvc.perform(
+                get("/api/employees/search?keyword=bag")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<EmployeeResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertEquals(10,response.getData().size());
+            assertEquals(10,response.getPaging().getTotalPage());
+            assertEquals(0,response.getPaging().getCurrentPage());
+            assertEquals(100,response.getPaging().getSize());
+
+
+        });
+
+
+        mockMvc.perform(
+                get("/api/employees/search?keyword=BAG")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<EmployeeResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertEquals(10,response.getData().size());
+            assertEquals(10,response.getPaging().getTotalPage());
+            assertEquals(0,response.getPaging().getCurrentPage());
+            assertEquals(100,response.getPaging().getSize());
+
+
+        });
+
+        mockMvc.perform(
+                get("/api/employees/search?keyword=bAgA")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<EmployeeResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertEquals(10,response.getData().size());
+            assertEquals(10,response.getPaging().getTotalPage());
+            assertEquals(0,response.getPaging().getCurrentPage());
+            assertEquals(100,response.getPaging().getSize());
+
+
+        });
+
+
+    }
+
+    @Test
+    void searchEmployeeNotFound() throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        for (int i = 0; i < 100; i++) {
+            Employee employee = new Employee();
+            employee.setBirthDate(sdf.parse("1998-09-11"));
+            employee.setFirstName("Bagas");
+            employee.setLastName("Anwar");
+            employee.setGender("M");
+            employee.setHireDate(sdf.parse("2022-09-21"));
+            employeesRepository.save(employee);
+            System.out.println(employee.getEmpNo());
+        }
+
+
+        mockMvc.perform(
+                get("/api/employees/search?keyword=Nurul")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<EmployeeResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertEquals(0,response.getData().size());
+            assertEquals(0,response.getPaging().getTotalPage());
+            assertEquals(0,response.getPaging().getCurrentPage());
+            assertEquals(0,response.getPaging().getSize());
+
 
         });
     }

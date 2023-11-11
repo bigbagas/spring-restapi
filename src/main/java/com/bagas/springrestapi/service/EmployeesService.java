@@ -137,10 +137,13 @@ public class EmployeesService {
 
             if (Objects.nonNull(keyword)){
                 predicates.add(criteriaBuilder.or(
-                        criteriaBuilder.like(root.get("firstName"),"%"+keyword+"%"),
-                        criteriaBuilder.like(root.get("lastName"),"%"+keyword+"%")
+                        criteriaBuilder.like(
+                                criteriaBuilder.lower(root.get("firstName")), "%"+keyword.toLowerCase()+"%"
+                        ),
+                        criteriaBuilder.like(
+                                criteriaBuilder.lower(root.get("lastName")), "%"+keyword.toLowerCase()+"%"
+                        )
                 ));
-
             }
 
             return query.where(predicates.toArray(new Predicate[0])).getRestriction();
