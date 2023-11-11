@@ -5,7 +5,7 @@ import com.bagas.springrestapi.enums.Gender;
 import com.bagas.springrestapi.model.EmployeeResponse;
 import com.bagas.springrestapi.model.RegisterEmployeeRequest;
 import com.bagas.springrestapi.model.UpdateEmployeeRequest;
-import com.bagas.springrestapi.repository.EmployeesRepository;
+import com.bagas.springrestapi.repository.EmployeeRepository;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -23,7 +23,7 @@ import java.util.Objects;
 public class EmployeesService {
 
     @Autowired
-    private EmployeesRepository employeesRepository;
+    private EmployeeRepository employeeRepository;
 
     @Autowired
     private ValidationService validationService;
@@ -48,14 +48,14 @@ public class EmployeesService {
 
 
         employee.setHireDate(request.getHireDate());
-        employeesRepository.save(employee);
+        employeeRepository.save(employee);
     }
 
     @Transactional
     public EmployeeResponse updateEmployee(Integer empNo,UpdateEmployeeRequest request){
         validationService.validate(request);
 
-        Employee employee = employeesRepository.findById(empNo)
+        Employee employee = employeeRepository.findById(empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee is not found"));
 
         if (Objects.nonNull(request.getBirthDate())){
@@ -82,7 +82,7 @@ public class EmployeesService {
             employee.setHireDate(request.getHireDate());
         }
 
-        employeesRepository.save(employee);
+        employeeRepository.save(employee);
 
         return toEmployeeResponse(employee);
 
@@ -105,7 +105,7 @@ public class EmployeesService {
     @Transactional(readOnly = true)
     public EmployeeResponse getEmployeeByEmpNo(Integer empNo){
 
-        Employee employeeByEmpNo = employeesRepository.findById(empNo)
+        Employee employeeByEmpNo = employeeRepository.findById(empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee is not found"));
 
         return toEmployeeResponse(employeeByEmpNo);
@@ -114,16 +114,16 @@ public class EmployeesService {
 
     @Transactional
     public void deleteEmployee(Integer empNo){
-        Employee employee = employeesRepository.findById(empNo)
+        Employee employee = employeeRepository.findById(empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee is not found"));
 
-        employeesRepository.delete(employee);
+        employeeRepository.delete(employee);
     }
 
     @Transactional(readOnly = true)
     public Page<EmployeeResponse> allEmployee(Integer page, Integer size){
         Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
-        Page<Employee> employees = employeesRepository.findAll(pageable);
+        Page<Employee> employees = employeeRepository.findAll(pageable);
 
         List<EmployeeResponse> employeeResponseList = employees.getContent().stream()
                 .map(this::toEmployeeResponse).toList();
@@ -150,7 +150,7 @@ public class EmployeesService {
         };
 
         Pageable pageable = PageRequest.of(page,size,Sort.by("empNo").ascending());
-        Page<Employee> employees = employeesRepository.findAll(specification,pageable);
+        Page<Employee> employees = employeeRepository.findAll(specification,pageable);
         List<EmployeeResponse> employeeResponseList = employees.getContent().stream()
                 .map(this::toEmployeeResponse).toList();
 

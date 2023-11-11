@@ -4,8 +4,7 @@ import com.bagas.springrestapi.entity.Employee;
 import com.bagas.springrestapi.model.EmployeeResponse;
 import com.bagas.springrestapi.model.RegisterEmployeeRequest;
 import com.bagas.springrestapi.model.WebResponse;
-import com.bagas.springrestapi.repository.EmployeesRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.bagas.springrestapi.repository.EmployeeRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,21 +16,18 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.MockMvcBuilder.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 class EmployeeControllerTest {
 
     @Autowired
-    private EmployeesRepository employeesRepository;
+    private EmployeeRepository employeeRepository;
 
     @Autowired
     private MockMvc mockMvc;
@@ -41,7 +37,7 @@ class EmployeeControllerTest {
 
     @BeforeEach
     void setUp(){
-        employeesRepository.deleteAll();
+        employeeRepository.deleteAll();
     }
 
     @Test
@@ -69,7 +65,7 @@ class EmployeeControllerTest {
             assertEquals("OK",response.getData());
             assertNull(response.getErrors());
 
-            Employee employeeTest = employeesRepository.findFirstByFirstName(request.getFirstName()).orElse(null);
+            Employee employeeTest = employeeRepository.findFirstByFirstName(request.getFirstName()).orElse(null);
             assertNotNull(employeeTest);
             assertEquals(request.getBirthDate(),employeeTest.getBirthDate());
             assertEquals(request.getFirstName(),employeeTest.getFirstName());
@@ -103,7 +99,7 @@ class EmployeeControllerTest {
             assertNotNull(response.getErrors());
             assertNull(response.getData());
 
-            Employee employeeTest = employeesRepository.findFirstByFirstName(request.getFirstName()).orElse(null);
+            Employee employeeTest = employeeRepository.findFirstByFirstName(request.getFirstName()).orElse(null);
             assertNull(employeeTest);
 
         });
@@ -120,7 +116,7 @@ class EmployeeControllerTest {
         employee.setLastName("Anwar");
         employee.setGender("M");
         employee.setHireDate(sdf.parse("2022-09-21"));
-        employeesRepository.save(employee);
+        employeeRepository.save(employee);
         System.out.println(employee.getEmpNo());
 
         RegisterEmployeeRequest request = new RegisterEmployeeRequest();
@@ -150,7 +146,7 @@ class EmployeeControllerTest {
             assertEquals(response.getData().getHireDate(),request.getHireDate());
             assertNull(response.getErrors());
 
-            Employee employeeTest = employeesRepository.findById(employee.getEmpNo()).orElse(null);
+            Employee employeeTest = employeeRepository.findById(employee.getEmpNo()).orElse(null);
             assertNotNull(employeeTest);
             assertEquals(request.getBirthDate(),employeeTest.getBirthDate());
             assertEquals(request.getFirstName(),employeeTest.getFirstName());
@@ -170,7 +166,7 @@ class EmployeeControllerTest {
         employee.setLastName("Anwar");
         employee.setGender("M");
         employee.setHireDate(sdf.parse("2022-09-21"));
-        employeesRepository.save(employee);
+        employeeRepository.save(employee);
         System.out.println(employee.getEmpNo());
 
         RegisterEmployeeRequest request = new RegisterEmployeeRequest();
@@ -192,7 +188,7 @@ class EmployeeControllerTest {
             assertNull(response.getData());
             assertNotNull(response.getErrors());
 
-            Employee employeeTest = employeesRepository.findById(employee.getEmpNo()).orElse(null);
+            Employee employeeTest = employeeRepository.findById(employee.getEmpNo()).orElse(null);
             assertEquals(employee.getBirthDate(),employeeTest.getBirthDate());
             assertEquals(employee.getFirstName(),employeeTest.getFirstName());
             assertEquals(employee.getLastName(),employeeTest.getLastName());
@@ -211,7 +207,7 @@ class EmployeeControllerTest {
         employee.setLastName("Anwar");
         employee.setGender("M");
         employee.setHireDate(sdf.parse("2022-09-21"));
-        employeesRepository.save(employee);
+        employeeRepository.save(employee);
         System.out.println(employee.getEmpNo());
 
         RegisterEmployeeRequest request = new RegisterEmployeeRequest();
@@ -233,7 +229,7 @@ class EmployeeControllerTest {
             assertNull(response.getData());
             assertNotNull(response.getErrors());
 
-            Employee employeeTest = employeesRepository.findById(employee.getEmpNo()).orElse(null);
+            Employee employeeTest = employeeRepository.findById(employee.getEmpNo()).orElse(null);
             assertEquals(employee.getBirthDate(),employeeTest.getBirthDate());
             assertEquals(employee.getFirstName(),employeeTest.getFirstName());
             assertEquals(employee.getLastName(),employeeTest.getLastName());
@@ -252,7 +248,7 @@ class EmployeeControllerTest {
         employee.setLastName("Anwar");
         employee.setGender("M");
         employee.setHireDate(sdf.parse("2022-09-21"));
-        employeesRepository.save(employee);
+        employeeRepository.save(employee);
         System.out.println(employee.getEmpNo());
 
 
@@ -266,7 +262,7 @@ class EmployeeControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
 
-            Employee employeeTest = employeesRepository.findById(employee.getEmpNo()).orElse(null);
+            Employee employeeTest = employeeRepository.findById(employee.getEmpNo()).orElse(null);
             assertNotNull(employeeTest);
             assertEquals(employee.getBirthDate(),employeeTest.getBirthDate());
             assertEquals(employee.getFirstName(),employeeTest.getFirstName());
@@ -286,7 +282,7 @@ class EmployeeControllerTest {
         employee.setLastName("Anwar");
         employee.setGender("M");
         employee.setHireDate(sdf.parse("2022-09-21"));
-        employeesRepository.save(employee);
+        employeeRepository.save(employee);
         System.out.println(employee.getEmpNo());
 
 
@@ -312,7 +308,7 @@ class EmployeeControllerTest {
         employee.setLastName("Anwar");
         employee.setGender("M");
         employee.setHireDate(sdf.parse("2022-09-21"));
-        employeesRepository.save(employee);
+        employeeRepository.save(employee);
         System.out.println(employee.getEmpNo());
 
 
@@ -327,7 +323,7 @@ class EmployeeControllerTest {
             assertEquals("OK",response.getData());
             assertNull(response.getErrors());
 
-            Employee employeeTest = employeesRepository.findById(employee.getEmpNo()).orElse(null);
+            Employee employeeTest = employeeRepository.findById(employee.getEmpNo()).orElse(null);
             assertNull(employeeTest);
 
         });
@@ -343,7 +339,7 @@ class EmployeeControllerTest {
         employee.setLastName("Anwar");
         employee.setGender("M");
         employee.setHireDate(sdf.parse("2022-09-21"));
-        employeesRepository.save(employee);
+        employeeRepository.save(employee);
         System.out.println(employee.getEmpNo());
 
 
@@ -357,7 +353,7 @@ class EmployeeControllerTest {
             assertNotNull(response.getErrors());
             assertNull(response.getData());
 
-            Employee employeeTest = employeesRepository.findById(employee.getEmpNo()).orElse(null);
+            Employee employeeTest = employeeRepository.findById(employee.getEmpNo()).orElse(null);
             assertNotNull(employeeTest);
 
         });
@@ -376,7 +372,7 @@ class EmployeeControllerTest {
             employee.setLastName("Anwar");
             employee.setGender("M");
             employee.setHireDate(sdf.parse("2022-09-21"));
-            employeesRepository.save(employee);
+            employeeRepository.save(employee);
             System.out.println(employee.getEmpNo());
         }
 
@@ -412,7 +408,7 @@ class EmployeeControllerTest {
             employee.setLastName("Nur");
             employee.setGender("M");
             employee.setHireDate(sdf.parse("2022-09-21"));
-            employeesRepository.save(employee);
+            employeeRepository.save(employee);
             System.out.println(employee.getEmpNo());
         }
 
@@ -423,7 +419,7 @@ class EmployeeControllerTest {
             employee.setLastName("Aisyah");
             employee.setGender("F");
             employee.setHireDate(sdf.parse("2023-08-22"));
-            employeesRepository.save(employee);
+            employeeRepository.save(employee);
             System.out.println(employee.getEmpNo());
         }
 
@@ -580,7 +576,7 @@ class EmployeeControllerTest {
             employee.setLastName("Anwar");
             employee.setGender("M");
             employee.setHireDate(sdf.parse("2022-09-21"));
-            employeesRepository.save(employee);
+            employeeRepository.save(employee);
             System.out.println(employee.getEmpNo());
         }
 
