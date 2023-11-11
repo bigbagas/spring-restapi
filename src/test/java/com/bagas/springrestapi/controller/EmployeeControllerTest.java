@@ -301,4 +301,65 @@ class EmployeeControllerTest {
         });
     }
 
+    @Test
+    void deleteEmployeeSuccess() throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        Employee employee = new Employee();
+        employee.setBirthDate(sdf.parse("1998-09-11"));
+        employee.setFirstName("Bagas");
+        employee.setLastName("Anwar");
+        employee.setGender("M");
+        employee.setHireDate(sdf.parse("2022-09-21"));
+        employeesRepository.save(employee);
+        System.out.println(employee.getEmpNo());
+
+
+        mockMvc.perform(
+                delete("/api/employees/"+employee.getEmpNo())
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(status().isOk()
+        ).andDo(result -> {
+            WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertEquals("OK",response.getData());
+            assertNull(response.getErrors());
+
+            Employee employeeTest = employeesRepository.findById(employee.getEmpNo()).orElse(null);
+            assertNull(employeeTest);
+
+        });
+    }
+
+    @Test
+    void deleteEmployeeNotFound() throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        Employee employee = new Employee();
+        employee.setBirthDate(sdf.parse("1998-09-11"));
+        employee.setFirstName("Bagas");
+        employee.setLastName("Anwar");
+        employee.setGender("M");
+        employee.setHireDate(sdf.parse("2022-09-21"));
+        employeesRepository.save(employee);
+        System.out.println(employee.getEmpNo());
+
+
+        mockMvc.perform(
+                delete("/api/employees/1")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(status().isNotFound()
+        ).andDo(result -> {
+            WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getErrors());
+            assertNull(response.getData());
+
+            Employee employeeTest = employeesRepository.findById(employee.getEmpNo()).orElse(null);
+            assertNotNull(employeeTest);
+
+        });
+    }
+
 }
