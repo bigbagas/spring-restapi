@@ -46,22 +46,4 @@ public class ErrorController {
                 .body(WebResponse.<String>builder().errors(errors.toString()).build());
 
     }
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public Map<String, String> handleValidationExceptions(
-//            MethodArgumentNotValidException ex) {
-//        Map<String, String> errors = new HashMap<>();
-//        ex.getBindingResult().getAllErrors().forEach((error) -> {
-//            String fieldName = ((FieldError) error).getField();
-//            String errorMessage = error.getDefaultMessage();
-//            errors.put(fieldName, errorMessage);
-//        });
-//        return errors;
-//    }
-//
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<WebResponse<String>> exception(Exception exception) {
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                .body(WebResponse.<String>builder().errors(exception.getMessage()).build());
-//    }
 }

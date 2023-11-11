@@ -7,11 +7,13 @@ import com.bagas.springrestapi.model.RegisterEmployeeRequest;
 import com.bagas.springrestapi.model.UpdateEmployeeRequest;
 import com.bagas.springrestapi.repository.EmployeesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -113,5 +115,15 @@ public class EmployeesService {
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee is not found"));
 
         employeesRepository.delete(employee);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<EmployeeResponse> allEmployee(Integer page, Integer size){
+        Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
+        Page<Employee> employees = employeesRepository.findAll(pageable);
+
+        List<EmployeeResponse> employeeResponseList = employees.getContent().stream()
+                .map(this::toEmployeeResponse).toList();
+        return new PageImpl<>(employeeResponseList,pageable,employees.getTotalElements());
     }
 }
