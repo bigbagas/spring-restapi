@@ -8,13 +8,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "employee")
+@Table(name = "employees")
 public class Employee {
 
     @Id
@@ -39,5 +40,8 @@ public class Employee {
 
     @Temporal(TemporalType.DATE)
     private Date hireDate;
+
+    @OneToOne(mappedBy = "employee")
+    private DeptManager deptManagers;
 
 }
