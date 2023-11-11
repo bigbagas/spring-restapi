@@ -76,4 +76,22 @@ public class EmployeeController {
                         .size((int) employeeResponses.getTotalElements()).build())
                 .build();
     }
+
+    @GetMapping(
+            path = "/employees/search",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<List<EmployeeResponse>> searchEmployee(@RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
+                                                               @RequestParam(value = "size",required = false,defaultValue = "10")Integer size,
+                                                              @RequestParam(value = "keyword",required = false)String keyword){
+        Page<EmployeeResponse> employeeResponses = employeesService.searchEmployee(keyword,page,size);
+        return WebResponse.<List<EmployeeResponse>>builder()
+                .data(employeeResponses.getContent())
+                .paging(PagingResponse.builder()
+                        .currentPage(employeeResponses.getNumber())
+                        .totalPage(employeeResponses.getTotalPages())
+                        .size((int) employeeResponses.getTotalElements()).build())
+                .build();
+    }
+
 }

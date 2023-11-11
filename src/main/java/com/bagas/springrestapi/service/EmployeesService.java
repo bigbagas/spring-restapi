@@ -6,13 +6,16 @@ import com.bagas.springrestapi.model.EmployeeResponse;
 import com.bagas.springrestapi.model.RegisterEmployeeRequest;
 import com.bagas.springrestapi.model.UpdateEmployeeRequest;
 import com.bagas.springrestapi.repository.EmployeesRepository;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -125,5 +128,31 @@ public class EmployeesService {
         List<EmployeeResponse> employeeResponseList = employees.getContent().stream()
                 .map(this::toEmployeeResponse).toList();
         return new PageImpl<>(employeeResponseList,pageable,employees.getTotalElements());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<EmployeeResponse> searchEmployee(String keyword, Integer page, Integer size){
+        Specification<Employee> specification = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (Objects.nonNull(keyword)){
+                predicates.add(criteriaBuilder.or(
+                        criteriaBuilder.like(root.get("firstName"),"%"+keyword+"%"),
+                        criteriaBuilder.like(root.get("lastName"),"%"+keyword+"%")
+                ));
+
+            }
+
+            return query.where(predicates.toArray(new Predicate[0])).getRestriction();
+        };
+
+        Pageable pageable = PageRequest.of(page,size,Sort.by("empNo").ascending());
+        Page<Employee> employees = employeesRepository.findAll(specification,pageable);
+        List<EmployeeResponse> employeeResponseList = employees.getContent().stream()
+                .map(this::toEmployeeResponse).toList();
+
+        return new PageImpl<>(employeeResponseList,pageable,employees.getTotalElements());
+
+
     }
 }
