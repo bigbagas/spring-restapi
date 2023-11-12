@@ -1,7 +1,7 @@
 package com.bagas.springrestapi.controller;
 
 import com.bagas.springrestapi.model.*;
-import com.bagas.springrestapi.service.EmployeesService;
+import com.bagas.springrestapi.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,7 +15,7 @@ import java.util.List;
 public class EmployeeController {
 
     @Autowired
-    private EmployeesService employeesService;
+    private EmployeeService employeeService;
 
     @PostMapping(
             path = "/employees",
@@ -23,7 +23,7 @@ public class EmployeeController {
     )
     public WebResponse<String> registerEmployee(@Valid @RequestBody RegisterEmployeeRequest request){
         System.out.println("gender = "+request.getGender());
-        employeesService.registerEmployee(request);
+        employeeService.registerEmployee(request);
         return WebResponse.<String>builder().data("OK").build();
     }
 
@@ -34,7 +34,7 @@ public class EmployeeController {
     )
     public WebResponse<EmployeeResponse> updateEmployee(@PathVariable Integer empNo,
                                                         @RequestBody UpdateEmployeeRequest request){
-        EmployeeResponse employeeResponse = employeesService.updateEmployee(empNo,request);
+        EmployeeResponse employeeResponse = employeeService.updateEmployee(empNo,request);
 
         return WebResponse.<EmployeeResponse>builder().data(employeeResponse).build();
     }
@@ -45,7 +45,7 @@ public class EmployeeController {
     )
     public WebResponse<EmployeeResponse> getEmployeeByEmpNo(@PathVariable Integer empNo){
 
-        EmployeeResponse employeeResponse = employeesService.getEmployeeByEmpNo(empNo);
+        EmployeeResponse employeeResponse = employeeService.getEmployeeByEmpNo(empNo);
 
         return WebResponse.<EmployeeResponse>builder().data(employeeResponse).build();
 
@@ -56,7 +56,7 @@ public class EmployeeController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public WebResponse<String> deleteEmployee(@PathVariable Integer empNo){
-        employeesService.deleteEmployee(empNo);
+        employeeService.deleteEmployee(empNo);
 
         return WebResponse.<String>builder().data("OK").build();
     }
@@ -67,7 +67,7 @@ public class EmployeeController {
     )
     public WebResponse<List<EmployeeResponse>> findAllEmployee(@RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
                                                                @RequestParam(value = "size",required = false,defaultValue = "10")Integer size){
-        Page<EmployeeResponse> employeeResponses = employeesService.allEmployee(page,size);
+        Page<EmployeeResponse> employeeResponses = employeeService.allEmployee(page,size);
         return WebResponse.<List<EmployeeResponse>>builder()
                 .data(employeeResponses.getContent())
                 .paging(PagingResponse.builder()
@@ -84,7 +84,7 @@ public class EmployeeController {
     public WebResponse<List<EmployeeResponse>> searchEmployee(@RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
                                                                @RequestParam(value = "size",required = false,defaultValue = "10")Integer size,
                                                               @RequestParam(value = "keyword",required = false)String keyword){
-        Page<EmployeeResponse> employeeResponses = employeesService.searchEmployee(keyword,page,size);
+        Page<EmployeeResponse> employeeResponses = employeeService.searchEmployee(keyword,page,size);
         return WebResponse.<List<EmployeeResponse>>builder()
                 .data(employeeResponses.getContent())
                 .paging(PagingResponse.builder()

@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class EmployeesService {
+public class EmployeeService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -39,6 +39,19 @@ public class EmployeesService {
     public void registerEmployee(RegisterEmployeeRequest request){
 
         validationService.validate(request);
+
+        Optional<Employee> employeeCheck = employeeRepository
+                .findByBirthDateAndAndFirstNameAndLastNameAndHireDateAndGender(
+                        request.getBirthDate(),
+                        request.getFirstName(),
+                        request.getLastName(),
+                        request.getHireDate(),
+                        request.getGender()
+                );
+
+        if (employeeCheck.isPresent()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Employee already registered");
+        }
 
         Employee employee = new Employee();
         employee.setBirthDate(request.getBirthDate());
