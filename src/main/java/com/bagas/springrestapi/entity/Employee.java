@@ -44,6 +44,9 @@ public class Employee {
     @OneToOne(mappedBy = "employee")
     private DeptEmp deptEmps;
 
+    @OneToOne(mappedBy = "employee")
+    private DeptManager deptManager;
+
 
 
 
