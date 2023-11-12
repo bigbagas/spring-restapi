@@ -62,7 +62,7 @@ public class EmployeeController {
     }
 
     @GetMapping(
-            path = "/employees/search/all",
+            path = "/employees",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public WebResponse<List<EmployeeResponse>> findAllEmployee(@RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
