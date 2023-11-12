@@ -42,24 +42,27 @@ public class DeptEmpService {
     public void registerDeptEmp (RegisterDeptEmpRequest request){
         validationService.validate(request);
         System.out.println(request);
-
-        Optional<DeptEmp> deptEmpCheck = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(request.getDeptNo(),request.getEmpNo());
-
-        if (deptEmpCheck.isPresent()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Employee is already register is this department");
-        }
-
         Department department = departmentRepository.findById(request.getDeptNo())
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
 
         Employee employee = employeeRepository.findById(request.getEmpNo())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee is not found"));
 
+        Optional<DeptEmp> deptEmpCheck = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(request.getDeptNo(),request.getEmpNo());
+
+        if (deptEmpCheck.isPresent()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Employee is already register is this Department");
+        }
+
+        Optional<DeptEmp> deptEmpCheck2 = deptEmpRepository.findById(request.getEmpNo());
+
+        if (deptEmpCheck2.isPresent()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Employee is already register in other Department");
+        }
+
         DeptEmp deptEmp = new DeptEmp();
         deptEmp.setFromDate(request.getFromDate());
         deptEmp.setToDate(request.getToDate());
-//        deptEmp.setEmpNo(employee.getEmpNo());
-//        deptEmp.setDeptNo(department.getDeptNo());
         deptEmp.setDepartment(department);
         deptEmp.setEmployee(employee);
 

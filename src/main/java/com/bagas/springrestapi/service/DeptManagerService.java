@@ -33,6 +33,13 @@ public class DeptManagerService {
         validationService.validate(request);
         System.out.println(request);
 
+        Department department = departmentRepository.findById(request.getDeptNo())
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
+
+        Employee employee = employeeRepository.findById(request.getEmpNo())
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee is not found"));
+
+
         Optional<DeptManager> deptManagerCheck = deptManagerRepository.findByDepartment_DeptNoAndAndEmpNo(request.getDeptNo(), request.getEmpNo());
 
         if (deptManagerCheck.isPresent()){
@@ -45,11 +52,6 @@ public class DeptManagerService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Manager is already registered in other Department");
         }
 
-        Department department = departmentRepository.findById(request.getDeptNo())
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
-
-        Employee employee = employeeRepository.findById(request.getEmpNo())
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee is not found"));
 
 
         DeptManager deptManager = new DeptManager();
