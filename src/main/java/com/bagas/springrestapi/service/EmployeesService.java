@@ -1,10 +1,13 @@
 package com.bagas.springrestapi.service;
 
+import com.bagas.springrestapi.entity.DeptEmp;
 import com.bagas.springrestapi.entity.Employee;
 import com.bagas.springrestapi.enums.Gender;
+import com.bagas.springrestapi.model.DeptEmpResponse;
 import com.bagas.springrestapi.model.EmployeeResponse;
 import com.bagas.springrestapi.model.RegisterEmployeeRequest;
 import com.bagas.springrestapi.model.UpdateEmployeeRequest;
+import com.bagas.springrestapi.repository.DeptEmpRepository;
 import com.bagas.springrestapi.repository.EmployeeRepository;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class EmployeesService {
@@ -27,6 +31,9 @@ public class EmployeesService {
 
     @Autowired
     private ValidationService validationService;
+
+    @Autowired
+    private DeptEmpRepository deptEmpRepository;
 
     @Transactional
     public void registerEmployee(RegisterEmployeeRequest request){
@@ -114,8 +121,15 @@ public class EmployeesService {
 
     @Transactional
     public void deleteEmployee(Integer empNo){
+
         Employee employee = employeeRepository.findById(empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee is not found"));
+
+        Optional<DeptEmp> deptEmp = deptEmpRepository.findById(empNo);
+
+        if (deptEmp.isPresent()){
+            deptEmpRepository.delete(deptEmp.get());
+        }
 
         employeeRepository.delete(employee);
     }

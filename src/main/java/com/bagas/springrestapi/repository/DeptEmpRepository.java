@@ -20,4 +20,6 @@ public interface DeptEmpRepository extends JpaRepository<DeptEmp, Integer> {
 
     Optional<DeptEmp> findByDepartment_DeptNoAndAndEmpNo( String deptNo,Integer empNo);
 
+    List<DeptEmp> findAllByDepartment_DeptNo(String deptNo);
+
 }

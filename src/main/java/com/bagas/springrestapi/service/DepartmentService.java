@@ -1,11 +1,13 @@
 package com.bagas.springrestapi.service;
 
 import com.bagas.springrestapi.entity.Department;
+import com.bagas.springrestapi.entity.DeptEmp;
 import com.bagas.springrestapi.model.DepartmentResponse;
 import com.bagas.springrestapi.model.EmployeeResponse;
 import com.bagas.springrestapi.model.RegisterDepartmentRequest;
 import com.bagas.springrestapi.model.UpdateDepartmentRequest;
 import com.bagas.springrestapi.repository.DepartmentRepository;
+import com.bagas.springrestapi.repository.DeptEmpRepository;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -25,6 +27,9 @@ public class DepartmentService {
 
     @Autowired
     private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private DeptEmpRepository deptEmpRepository;
 
     @Autowired
     private ValidationService validationService;
@@ -81,6 +86,12 @@ public class DepartmentService {
 
     @Transactional
     public void deleteDepartment(String deptNo){
+
+        List<DeptEmp> deptEmps = deptEmpRepository.findAllByDepartment_DeptNo(deptNo);
+
+        if (!deptEmps.isEmpty()){
+            deptEmpRepository.deleteAll(deptEmps);
+        }
 
         Department department = departmentRepository.findById(deptNo)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
