@@ -5,6 +5,7 @@ import com.bagas.springrestapi.entity.DeptEmp;
 import com.bagas.springrestapi.entity.Employee;
 import com.bagas.springrestapi.model.DeptEmpResponse;
 import com.bagas.springrestapi.model.RegisterDeptEmpRequest;
+import com.bagas.springrestapi.model.UpdateDeptEmpRequest;
 import com.bagas.springrestapi.repository.DepartmentRepository;
 import com.bagas.springrestapi.repository.DeptEmpRepository;
 import com.bagas.springrestapi.repository.EmployeeRepository;
@@ -42,7 +43,7 @@ public class DeptEmpService {
         validationService.validate(request);
         System.out.println(request);
 
-        Optional<DeptEmp> deptEmpCheck = deptEmpRepository.findFirstByEmpNoAndDepartment_DeptNo(request.getEmpNo(),request.getDeptNo());
+        Optional<DeptEmp> deptEmpCheck = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(request.getDeptNo(),request.getEmpNo());
 
         if (deptEmpCheck.isPresent()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Employee is already register is this department");
@@ -96,15 +97,40 @@ public class DeptEmpService {
         return new PageImpl<>(deptEmpResponseList,pageable,deptEmps.getTotalElements());
     }
 
-//    @Transactional(readOnly = true)
-//    public DeptEmpResponse deptEmpByDeptNoAndEmpNo(String deptNo, Integer empNo){
-//        Optional<DeptEmp> deptEmp1 = deptEmpRepository.findById(deptNo)
-//
-//        DeptEmp deptEmp = deptEmpRepository.findByDeptNoAndEmpNo(deptNo,empNo)
-//
-//        if (deptEmp)
-//
-//    }
+    @Transactional(readOnly = true)
+    public DeptEmpResponse deptEmpByDeptNoAndEmpNo(String deptNo, Integer empNo){
+        DeptEmp deptEmp = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Department No or Employee No is not found"));
+
+//        Optional<DeptEmp> deptEmp = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo);
+
+//        if (deptEmp.isEmpty()){
+//           throw  new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found");
+//        }
+        System.out.println(deptEmp);
+        return toDeptEmpResponse(deptEmp);
+
+
+    }
+
+    @Transactional
+    public DeptEmpResponse updateDeptEmp (String deptNo, Integer empNo,UpdateDeptEmpRequest request){
+        validationService.validate(request);
+
+        DeptEmp deptEmp = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found"));
+
+        Department department = departmentRepository.findById(request.getDeptNo())
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
+
+        deptEmp.setFromDate(request.getFromDate());
+        deptEmp.setToDate(request.getToDate());
+        deptEmp.setDepartment(department);
+
+        deptEmpRepository.save(deptEmp);
+
+        return toDeptEmpResponse(deptEmp);
+    }
 
 
 }
