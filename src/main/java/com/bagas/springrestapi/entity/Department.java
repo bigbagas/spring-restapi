@@ -23,7 +23,7 @@ public class Department {
     @Column(name = "dept_name")
     private String deptName;
 
-//    @OneToMany(mappedBy = "department")
-//    private List<DeptEmp> deptEmps;
+    @OneToMany(mappedBy = "department")
+    private List<DeptEmp> deptEmps;
 
 }

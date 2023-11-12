@@ -24,16 +24,18 @@ public class DeptEmp {
     private Date toDate;
 
 
-    private String deptNo;
-
+//    private String deptNo;
+//
     @Id
     private Integer empNo;
 
-//    @ManyToOne
-//    @JoinColumn(name = "dept_no",referencedColumnName = "dept_no")
-//    private Department department;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "emp_no",referencedColumnName = "emp_no")
-//    private Employee employee;
+    @ManyToOne
+    @JoinColumn(name = "dept_no",referencedColumnName = "dept_no")
+    private Department department;
+
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "emp_no",referencedColumnName = "emp_no")
+    private Employee employee;
 }

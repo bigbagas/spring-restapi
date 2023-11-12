@@ -42,7 +42,7 @@ public class DeptEmpService {
         validationService.validate(request);
         System.out.println(request);
 
-        Optional<DeptEmp> deptEmpCheck = deptEmpRepository.findFirstByEmpNoAndDeptNo(request.getEmpNo(),request.getDeptNo());
+        Optional<DeptEmp> deptEmpCheck = deptEmpRepository.findFirstByEmpNoAndDepartment_DeptNo(request.getEmpNo(),request.getDeptNo());
 
         if (deptEmpCheck.isPresent()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Employee is already register is this department");
@@ -57,42 +57,54 @@ public class DeptEmpService {
         DeptEmp deptEmp = new DeptEmp();
         deptEmp.setFromDate(request.getFromDate());
         deptEmp.setToDate(request.getToDate());
-        deptEmp.setEmpNo(employee.getEmpNo());
-        deptEmp.setDeptNo(department.getDeptNo());
+//        deptEmp.setEmpNo(employee.getEmpNo());
+//        deptEmp.setDeptNo(department.getDeptNo());
+        deptEmp.setDepartment(department);
+        deptEmp.setEmployee(employee);
 
         deptEmpRepository.save(deptEmp);
     }
 
-    @Transactional(readOnly = true)
-    public Page<DeptEmpResponse> deptEmpAllEmployeeByDeptNo(String deptNo, Integer page, Integer size){
+//    @Transactional(readOnly = true)
+//    public Page<DeptEmpResponse> deptEmpAllEmployeeByDeptNo(String deptNo, Integer page, Integer size){
+//
+//        Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
+//        Page<DeptEmp> deptEmps = deptEmpRepository.findByDeptNo(deptNo,pageable);
+//        List<DeptEmpResponse> deptEmpResponseList = deptEmps.stream()
+//                .map(this::toDeptEmpResponse).toList();
+//
+//        return new PageImpl<>(deptEmpResponseList,pageable,deptEmps.getTotalElements());
+//    }
+//
+//    private DeptEmpResponse toDeptEmpResponse(DeptEmp deptEmp){
+//        return DeptEmpResponse.builder()
+//                .deptNo(deptEmp.getDeptNo())
+//                .empNo(deptEmp.getEmpNo())
+//                .fromDate(deptEmp.getFromDate())
+//                .toDate(deptEmp.getToDate())
+//                .build();
+//    }
+//
+//    @Transactional(readOnly = true)
+//    public Page<DeptEmpResponse> deptEmpAllEmployee( Integer page, Integer size){
+//
+//        Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
+//        Page<DeptEmp> deptEmps = deptEmpRepository.findAll(pageable);
+//        List<DeptEmpResponse> deptEmpResponseList = deptEmps.stream()
+//                .map(this::toDeptEmpResponse).toList();
+//
+//        return new PageImpl<>(deptEmpResponseList,pageable,deptEmps.getTotalElements());
+//    }
 
-        Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
-        Page<DeptEmp> deptEmps = deptEmpRepository.findByDeptNo(deptNo,pageable);
-        List<DeptEmpResponse> deptEmpResponseList = deptEmps.stream()
-                .map(this::toDeptEmpResponse).toList();
-
-        return new PageImpl<>(deptEmpResponseList,pageable,deptEmps.getTotalElements());
-    }
-
-    private DeptEmpResponse toDeptEmpResponse(DeptEmp deptEmp){
-        return DeptEmpResponse.builder()
-                .deptNo(deptEmp.getDeptNo())
-                .empNo(deptEmp.getEmpNo())
-                .fromDate(deptEmp.getFromDate())
-                .toDate(deptEmp.getToDate())
-                .build();
-    }
-
-    @Transactional(readOnly = true)
-    public Page<DeptEmpResponse> deptEmpAllEmployee( Integer page, Integer size){
-
-        Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
-        Page<DeptEmp> deptEmps = deptEmpRepository.findAll(pageable);
-        List<DeptEmpResponse> deptEmpResponseList = deptEmps.stream()
-                .map(this::toDeptEmpResponse).toList();
-
-        return new PageImpl<>(deptEmpResponseList,pageable,deptEmps.getTotalElements());
-    }
+//    @Transactional(readOnly = true)
+//    public DeptEmpResponse deptEmpByDeptNoAndEmpNo(String deptNo, Integer empNo){
+//        Optional<DeptEmp> deptEmp1 = deptEmpRepository.findById(deptNo)
+//
+//        DeptEmp deptEmp = deptEmpRepository.findByDeptNoAndEmpNo(deptNo,empNo)
+//
+//        if (deptEmp)
+//
+//    }
 
 
 }

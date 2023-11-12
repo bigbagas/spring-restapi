@@ -41,8 +41,8 @@ public class Employee {
     @Temporal(TemporalType.DATE)
     private Date hireDate;
 
-//    @OneToMany(mappedBy = "employee")
-//    private List<DeptEmp> deptEmps;
+    @OneToOne(mappedBy = "employee")
+    private DeptEmp deptEmps;
 
 
 
