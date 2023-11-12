@@ -18,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class DepartmentService {
@@ -33,6 +34,11 @@ public class DepartmentService {
     public void registerDepartment(RegisterDepartmentRequest request){
         validationService.validate(request);
 
+        Optional<Department> dept = departmentRepository.findById(request.getDeptNo());
+
+        if (dept.isPresent()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Department No is already registered");
+        }
         Department department = new Department();
         department.setDeptNo(request.getDeptNo());
         department.setDeptName(request.getDeptName());

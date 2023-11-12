@@ -16,16 +16,24 @@ import java.util.Date;
 @Table(name = "dept_emp")
 public class DeptEmp {
 
-    @Id
+
+    @Temporal(TemporalType.DATE)
     private Date fromDate;
 
+    @Temporal(TemporalType.DATE)
     private Date toDate;
 
-    @ManyToOne
-    @JoinColumn(name = "dept_no",referencedColumnName = "dept_no")
-    private Department department;
 
-    @OneToOne
-    @JoinColumn(name = "emp_no",referencedColumnName = "emp_no")
-    private Employee employee;
+    private String deptNo;
+
+    @Id
+    private Integer empNo;
+
+//    @ManyToOne
+//    @JoinColumn(name = "dept_no",referencedColumnName = "dept_no")
+//    private Department department;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "emp_no",referencedColumnName = "emp_no")
+//    private Employee employee;
 }
