@@ -33,44 +33,44 @@ public class DeptEmpController {
 
 
     }
+
+    @GetMapping(
+            path = "/departments/{deptNo}/employees",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<List<DeptEmpResponse>> deptEmpAllEmployeeByDeptNo(@PathVariable("deptNo") String deptNo,
+                                                                     @RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
+                                                                     @RequestParam(value = "size",required = false,defaultValue = "10")Integer size){
+        Page<DeptEmpResponse> deptEmpResponses = deptEmpService.deptEmpAllEmployeeByDeptNo(deptNo,page,size);
+
+        return WebResponse.<List<DeptEmpResponse>>builder()
+                .data(deptEmpResponses.getContent())
+                .paging(PagingResponse.builder()
+                        .currentPage(deptEmpResponses.getNumber())
+                        .totalPage(deptEmpResponses.getTotalPages())
+                        .size((int) deptEmpResponses.getTotalElements()).build())
+                .build();
+
+    }
 //
-//    @GetMapping(
-//            path = "/departments/{deptNo}/employees",
-//            produces = MediaType.APPLICATION_JSON_VALUE
-//    )
-//    public WebResponse<List<DeptEmpResponse>> deptEmpAllEmployeeByDeptNo(@PathVariable("deptNo") String deptNo,
-//                                                                     @RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
-//                                                                     @RequestParam(value = "size",required = false,defaultValue = "10")Integer size){
-//        Page<DeptEmpResponse> deptEmpResponses = deptEmpService.deptEmpAllEmployeeByDeptNo(deptNo,page,size);
-//
-//        return WebResponse.<List<DeptEmpResponse>>builder()
-//                .data(deptEmpResponses.getContent())
-//                .paging(PagingResponse.builder()
-//                        .currentPage(deptEmpResponses.getNumber())
-//                        .totalPage(deptEmpResponses.getTotalPages())
-//                        .size((int) deptEmpResponses.getTotalElements()).build())
-//                .build();
-//
-//    }
-//
-//    @GetMapping(
-//            path = "/departments/employees",
-//            produces = MediaType.APPLICATION_JSON_VALUE
-//    )
-//    public WebResponse<List<DeptEmpResponse>> getDeptEmpAllEmployee(
-//                                                                     @RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
-//                                                                     @RequestParam(value = "size",required = false,defaultValue = "10")Integer size){
-//        Page<DeptEmpResponse> deptEmpResponses = deptEmpService.deptEmpAllEmployee(page,size);
-//
-//        return WebResponse.<List<DeptEmpResponse>>builder()
-//                .data(deptEmpResponses.getContent())
-//                .paging(PagingResponse.builder()
-//                        .currentPage(deptEmpResponses.getNumber())
-//                        .totalPage(deptEmpResponses.getTotalPages())
-//                        .size((int) deptEmpResponses.getTotalElements()).build())
-//                .build();
-//
-//    }
+    @GetMapping(
+            path = "/departments/employees",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<List<DeptEmpResponse>> getDeptEmpAllEmployee(
+                                                                     @RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
+                                                                     @RequestParam(value = "size",required = false,defaultValue = "10")Integer size){
+        Page<DeptEmpResponse> deptEmpResponses = deptEmpService.deptEmpAllEmployee(page,size);
+
+        return WebResponse.<List<DeptEmpResponse>>builder()
+                .data(deptEmpResponses.getContent())
+                .paging(PagingResponse.builder()
+                        .currentPage(deptEmpResponses.getNumber())
+                        .totalPage(deptEmpResponses.getTotalPages())
+                        .size((int) deptEmpResponses.getTotalElements()).build())
+                .build();
+
+    }
 
 //    @GetMapping(
 //            path = "/departments/{deptNo}/employees/{empNo}",

@@ -65,36 +65,36 @@ public class DeptEmpService {
         deptEmpRepository.save(deptEmp);
     }
 
-//    @Transactional(readOnly = true)
-//    public Page<DeptEmpResponse> deptEmpAllEmployeeByDeptNo(String deptNo, Integer page, Integer size){
+    @Transactional(readOnly = true)
+    public Page<DeptEmpResponse> deptEmpAllEmployeeByDeptNo(String deptNo, Integer page, Integer size){
+
+        Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
+        Page<DeptEmp> deptEmps = deptEmpRepository.findByDepartment_DeptNo(deptNo,pageable);
+        List<DeptEmpResponse> deptEmpResponseList = deptEmps.stream()
+                .map(this::toDeptEmpResponse).toList();
+
+        return new PageImpl<>(deptEmpResponseList,pageable,deptEmps.getTotalElements());
+    }
+
+    private DeptEmpResponse toDeptEmpResponse(DeptEmp deptEmp){
+        return DeptEmpResponse.builder()
+                .deptNo(deptEmp.getDepartment().getDeptNo())
+                .empNo(deptEmp.getEmpNo())
+                .fromDate(deptEmp.getFromDate())
+                .toDate(deptEmp.getToDate())
+                .build();
+    }
 //
-//        Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
-//        Page<DeptEmp> deptEmps = deptEmpRepository.findByDeptNo(deptNo,pageable);
-//        List<DeptEmpResponse> deptEmpResponseList = deptEmps.stream()
-//                .map(this::toDeptEmpResponse).toList();
-//
-//        return new PageImpl<>(deptEmpResponseList,pageable,deptEmps.getTotalElements());
-//    }
-//
-//    private DeptEmpResponse toDeptEmpResponse(DeptEmp deptEmp){
-//        return DeptEmpResponse.builder()
-//                .deptNo(deptEmp.getDeptNo())
-//                .empNo(deptEmp.getEmpNo())
-//                .fromDate(deptEmp.getFromDate())
-//                .toDate(deptEmp.getToDate())
-//                .build();
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public Page<DeptEmpResponse> deptEmpAllEmployee( Integer page, Integer size){
-//
-//        Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
-//        Page<DeptEmp> deptEmps = deptEmpRepository.findAll(pageable);
-//        List<DeptEmpResponse> deptEmpResponseList = deptEmps.stream()
-//                .map(this::toDeptEmpResponse).toList();
-//
-//        return new PageImpl<>(deptEmpResponseList,pageable,deptEmps.getTotalElements());
-//    }
+    @Transactional(readOnly = true)
+    public Page<DeptEmpResponse> deptEmpAllEmployee( Integer page, Integer size){
+
+        Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
+        Page<DeptEmp> deptEmps = deptEmpRepository.findAll(pageable);
+        List<DeptEmpResponse> deptEmpResponseList = deptEmps.stream()
+                .map(this::toDeptEmpResponse).toList();
+
+        return new PageImpl<>(deptEmpResponseList,pageable,deptEmps.getTotalElements());
+    }
 
 //    @Transactional(readOnly = true)
 //    public DeptEmpResponse deptEmpByDeptNoAndEmpNo(String deptNo, Integer empNo){

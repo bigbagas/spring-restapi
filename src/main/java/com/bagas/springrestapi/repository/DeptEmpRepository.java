@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DeptEmpRepository extends JpaRepository<DeptEmp, Employee> {
+public interface DeptEmpRepository extends JpaRepository<DeptEmp, Integer> {
 
     Optional<DeptEmp> findFirstByEmpNoAndDepartment_DeptNo(Integer empNo, String deptNo);
-//
-//    Page<DeptEmp> findByDeptNo(String deptNo, Pageable pageable);
+
+    Page<DeptEmp> findByDepartment_DeptNo(String deptNo, Pageable pageable);
 //
 //    DeptEmp findByDeptNoAndEmpNo( String deptNo,Integer empNo);
 
