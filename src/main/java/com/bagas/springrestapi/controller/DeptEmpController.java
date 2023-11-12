@@ -95,5 +95,18 @@ public class DeptEmpController {
 
     }
 
+    @DeleteMapping(
+            path = "/departments/{deptNo}/employees/{empNo}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<String> deleteDeptEmp(@PathVariable("deptNo")String deptNo,
+                                             @PathVariable("empNo")Integer empNo){
+        deptEmpService.deleteDeptEmp(deptNo,empNo);
+
+        return WebResponse.<String>builder()
+                .data("OK").build();
+
+    }
+
 
 }

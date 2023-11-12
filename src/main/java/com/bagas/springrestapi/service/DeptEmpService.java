@@ -132,5 +132,13 @@ public class DeptEmpService {
         return toDeptEmpResponse(deptEmp);
     }
 
+    @Transactional
+    public void deleteDeptEmp(String deptNo,Integer empNo){
+        DeptEmp deptEmp = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found"));
+
+        deptEmpRepository.delete(deptEmp);
+    }
+
 
 }
