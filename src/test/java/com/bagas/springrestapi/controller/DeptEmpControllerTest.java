@@ -941,6 +941,190 @@ class DeptEmpControllerTest {
             assertNotEquals(deptEmpTest.getToDate(),request.getToDate());
         });
 
+        UpdateDeptEmpRequest requestNewDeptNotFound = new UpdateDeptEmpRequest();
+        requestNewDeptNotFound.setDeptNo("PR99");
+        requestNewDeptNotFound.setFromDate(sdf.parse("2019-04-24"));
+        requestNewDeptNotFound.setToDate(sdf.parse("2023-01-01"));
+
+        mockMvc.perform(
+                put("/api/departments/"+department.getDeptNo()+"/employees/"+employee.getEmpNo())
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(requestNewDeptNotFound))
+        ).andExpectAll(
+                status().isNotFound()
+        ).andDo(result -> {
+            WebResponse<DeptEmpResponse> response = objectMapper.readValue(
+                    result.getResponse().getContentAsString(), new TypeReference<>() {
+                    });
+
+            assertNotNull(response.getErrors());
+            assertNull(response.getData());
+            assertNull(response.getPaging());
+
+            DeptEmp deptEmpTest = deptEmpRepository.findById(employee.getEmpNo()).orElse(null);
+            assertNotNull(deptEmpTest);
+            assertNotEquals(deptEmpTest.getDepartment().getDeptNo(),request.getDeptNo());
+            assertNotEquals(deptEmpTest.getFromDate(),request.getFromDate());
+            assertNotEquals(deptEmpTest.getToDate(),request.getToDate());
+        });
+
+    }
+
+    @Test
+    void deleteDeptEmpSuccess() throws Exception{
+
+        Department department = new Department();
+        department.setDeptNo("B16");
+        department.setDeptName("Test"+1);
+        departmentRepository.save(department);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        Employee employee = new Employee();
+        employee.setBirthDate(sdf.parse("1995-08-22"));
+        employee.setFirstName("Test");
+        employee.setLastName("Test");
+        employee.setGender("M");
+        employee.setHireDate(sdf.parse("2020-09-21"));
+        employeeRepository.save(employee);
+
+        RegisterDeptEmpRequest requestInsert = new RegisterDeptEmpRequest();
+        requestInsert.setDeptNo(department.getDeptNo());
+        requestInsert.setEmpNo(employee.getEmpNo());
+        requestInsert.setFromDate(sdf.parse("2020-09-21"));
+        requestInsert.setToDate(sdf.parse("2023-09-21"));
+
+        mockMvc.perform(
+                post("/api/departments/employees")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(requestInsert))
+        );
+
+        mockMvc.perform(
+                delete("/api/departments/"+department.getDeptNo()+"/employees/"+employee.getEmpNo())
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+            WebResponse<String> response = objectMapper.readValue(
+                    result.getResponse().getContentAsString(), new TypeReference<>() {
+                    });
+
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertNull(response.getPaging());
+
+            assertEquals("OK",response.getData());
+
+            DeptEmp deptEmpTest = deptEmpRepository.findById(employee.getEmpNo()).orElse(null);
+            assertNull(deptEmpTest);
+
+        });
+
+    }
+
+    @Test
+    void deleteDeptEmpNotFound() throws Exception{
+
+        Department department = new Department();
+        department.setDeptNo("B16");
+        department.setDeptName("Test"+1);
+        departmentRepository.save(department);
+
+        Department department2 = new Department();
+        department2.setDeptNo("X22");
+        department2.setDeptName("Test"+2);
+        departmentRepository.save(department);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        Employee employee = new Employee();
+        employee.setBirthDate(sdf.parse("1995-08-22"));
+        employee.setFirstName("Test");
+        employee.setLastName("Test");
+        employee.setGender("M");
+        employee.setHireDate(sdf.parse("2020-09-21"));
+        employeeRepository.save(employee);
+
+        Employee employee2 = new Employee();
+        employee2.setBirthDate(sdf.parse("1995-08-22"));
+        employee2.setFirstName("Test2");
+        employee2.setLastName("Test2");
+        employee2.setGender("M");
+        employee2.setHireDate(sdf.parse("2020-09-21"));
+        employeeRepository.save(employee2);
+
+        RegisterDeptEmpRequest requestInsert = new RegisterDeptEmpRequest();
+        requestInsert.setDeptNo(department.getDeptNo());
+        requestInsert.setEmpNo(employee.getEmpNo());
+        requestInsert.setFromDate(sdf.parse("2020-09-21"));
+        requestInsert.setToDate(sdf.parse("2023-09-21"));
+
+        mockMvc.perform(
+                post("/api/departments/employees")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(requestInsert))
+        );
+
+        mockMvc.perform(
+                delete("/api/departments/"+department.getDeptNo()+"/employees/0")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(
+                status().isNotFound()
+        ).andDo(result -> {
+            WebResponse<String> response = objectMapper.readValue(
+                    result.getResponse().getContentAsString(), new TypeReference<>() {
+                    });
+
+            assertNotNull(response.getErrors());
+            assertNull(response.getData());
+            assertNull(response.getPaging());
+
+            DeptEmp deptEmpTest = deptEmpRepository.findById(employee.getEmpNo()).orElse(null);
+            assertNotNull(deptEmpTest);
+
+        });
+
+        mockMvc.perform(
+                delete("/api/departments/X55/employees/"+employee.getEmpNo())
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(
+                status().isNotFound()
+        ).andDo(result -> {
+            WebResponse<String> response = objectMapper.readValue(
+                    result.getResponse().getContentAsString(), new TypeReference<>() {
+                    });
+
+            assertNotNull(response.getErrors());
+            assertNull(response.getData());
+            assertNull(response.getPaging());
+
+            DeptEmp deptEmpTest = deptEmpRepository.findById(employee.getEmpNo()).orElse(null);
+            assertNotNull(deptEmpTest);
+
+        });
+
+        mockMvc.perform(
+                delete("/api/departments/"+department2.getDeptNo()+"/employees/"+employee2.getEmpNo())
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(
+                status().isNotFound()
+        ).andDo(result -> {
+            WebResponse<String> response = objectMapper.readValue(
+                    result.getResponse().getContentAsString(), new TypeReference<>() {
+                    });
+
+            assertNotNull(response.getErrors());
+            assertNull(response.getData());
+            assertNull(response.getPaging());
+
+            DeptEmp deptEmpTest = deptEmpRepository.findById(employee.getEmpNo()).orElse(null);
+            assertNotNull(deptEmpTest);
+
+        });
     }
 
 
