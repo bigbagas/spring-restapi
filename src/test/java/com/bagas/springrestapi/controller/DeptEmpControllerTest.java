@@ -166,12 +166,12 @@ class DeptEmpControllerTest {
         employee.setHireDate(sdf.parse("2020-09-21"));
         employeeRepository.save(employee);
 
-        DeptEmp deptEmp = new DeptEmp();
-        deptEmp.setEmpNo(employee.getEmpNo());
-        deptEmp.setDepartment(department);
-        deptEmp.setFromDate(sdf.parse("2021-01-11"));
-        deptEmp.setToDate(sdf.parse("2022-12-12"));
-        deptEmpRepository.save(deptEmp);
+//        DeptEmp deptEmp = new DeptEmp();
+//        deptEmp.setEmpNo(employee.getEmpNo());
+//        deptEmp.setDepartment(department);
+//        deptEmp.setFromDate(sdf.parse("2021-01-11"));
+//        deptEmp.setToDate(sdf.parse("2022-12-12"));
+//        deptEmpRepository.save(deptEmp);
 
         RegisterDeptEmpRequest requestDeptNoIsNotFound = new RegisterDeptEmpRequest();
         requestDeptNoIsNotFound.setDeptNo("Dept");
@@ -193,16 +193,18 @@ class DeptEmpControllerTest {
             assertNotNull(response.getErrors());
             assertNull(response.getData());
 
+            System.out.println(response.getErrors());
+
             DeptEmp deptEmpTest = deptEmpRepository.findById(requestDeptNoIsNotFound.getEmpNo()).orElse(null);
             assertNull(deptEmpTest);
 
         });
 
         RegisterDeptEmpRequest requestEmpNoIsNotFound = new RegisterDeptEmpRequest();
-        requestDeptNoIsNotFound.setDeptNo("Test");
-        requestDeptNoIsNotFound.setEmpNo(33);
-        requestDeptNoIsNotFound.setFromDate(sdf.parse("2020-09-21"));
-        requestDeptNoIsNotFound.setToDate(sdf.parse("2023-09-21"));
+        requestEmpNoIsNotFound.setDeptNo(department.getDeptNo());
+        requestEmpNoIsNotFound.setEmpNo(33);
+        requestEmpNoIsNotFound.setFromDate(sdf.parse("2020-09-21"));
+        requestEmpNoIsNotFound.setToDate(sdf.parse("2023-09-21"));
 
         mockMvc.perform(
                 post("/api/departments/employees")
@@ -324,6 +326,7 @@ class DeptEmpControllerTest {
             employee.setGender("M");
             employee.setHireDate(sdf.parse("2020-09-21"));
             employeeRepository.save(employee);
+            System.out.println(employee.getFirstName() +" "+employee.getEmpNo());
 
         }
 
@@ -358,6 +361,10 @@ class DeptEmpControllerTest {
             WebResponse<List<DeptEmpResponse>> response = objectMapper.readValue(
                     result.getResponse().getContentAsString(), new TypeReference<>() {
                     });
+
+            for (int i = 0; i < response.getData().size(); i++) {
+                
+            }
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNotNull(response.getPaging());
