@@ -3,15 +3,20 @@ package com.bagas.springrestapi.service;
 import com.bagas.springrestapi.entity.Department;
 import com.bagas.springrestapi.entity.DeptManager;
 import com.bagas.springrestapi.entity.Employee;
+import com.bagas.springrestapi.model.DeptEmpResponse;
+import com.bagas.springrestapi.model.DeptManagerResponse;
 import com.bagas.springrestapi.model.RegisterDeptManagerRequest;
 import com.bagas.springrestapi.repository.DepartmentRepository;
 import com.bagas.springrestapi.repository.DeptManagerRepository;
 import com.bagas.springrestapi.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -61,6 +66,25 @@ public class DeptManagerService {
         deptManager.setEmployee(employee);
         deptManagerRepository.save(deptManager);
 
+    }
+
+    @Transactional(readOnly = true)
+    public Page<DeptManagerResponse> getAllDeptManagers(Integer page, Integer size){
+        Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
+        Page<DeptManager> deptManagers = deptManagerRepository.findAll(pageable);
+        List<DeptManagerResponse> deptEmpResponseList = deptManagers.stream()
+                .map(this::toDeptManagerResponse).toList();
+
+        return new PageImpl<>(deptEmpResponseList,pageable,deptManagers.getTotalElements());
+    }
+
+    private DeptManagerResponse toDeptManagerResponse(DeptManager deptManager){
+        return DeptManagerResponse.builder()
+                .empNo(deptManager.getEmpNo())
+                .deptNo(deptManager.getDepartment().getDeptNo())
+                .fromDate(deptManager.getFromDate())
+                .toDate(deptManager.getToDate())
+                .build();
     }
 
 }
