@@ -67,6 +67,32 @@ public class DeptManagerController {
                 .build();
     }
 
+    @GetMapping(
+            path = "/departments/{deptNo}/managers/{empNo}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<DeptManagerResponse> getDeptManagersByDeptNoAndEmpNo(@PathVariable("deptNo")String deptNo,
+                                                                    @PathVariable("empNo")Integer empNo){
+        DeptManagerResponse deptManagerResponses = deptManagerService.getDeptManagerByDeptNoAndEmpNo(deptNo,empNo);
+
+        return WebResponse.<DeptManagerResponse>builder()
+                .data(deptManagerResponses)
+                .build();
+    }
+
+    @DeleteMapping(
+            path = "/departments/{deptNo}/managers/{empNo}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<String> deleteDeptManagers(@PathVariable("deptNo")String deptNo,
+                                                               @PathVariable("empNo")Integer empNo){
+        deptManagerService.deleteDeptManager(deptNo,empNo);
+
+        return WebResponse.<String>builder()
+                .data("OK")
+                .build();
+    }
+
 
 
 }

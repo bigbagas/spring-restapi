@@ -89,12 +89,43 @@ public class DeptManagerService {
 
     @Transactional(readOnly = true)
     public Page<DeptManagerResponse> getDeptManagerByDeptNo(String deptNo,Integer page, Integer size){
+        Department department = departmentRepository.findById(deptNo)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
+
         Pageable pageable = PageRequest.of(page,size,Sort.by("empNo").ascending());
         Page<DeptManager> deptManagers = deptManagerRepository.findByDepartment_DeptNo(deptNo,pageable);
         List<DeptManagerResponse> deptManagerResponseList = deptManagers.stream()
                 .map(this::toDeptManagerResponse).toList();
 
         return new PageImpl<>(deptManagerResponseList,pageable,deptManagers.getTotalElements());
+    }
+
+    @Transactional(readOnly = true)
+    public DeptManagerResponse getDeptManagerByDeptNoAndEmpNo(String deptNo, Integer empNo){
+        Department department = departmentRepository.findById(deptNo)
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
+
+        Employee employee = employeeRepository.findById(empNo)
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee is not found"));
+
+        DeptManager deptManager = deptManagerRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found"));
+
+        return toDeptManagerResponse(deptManager);
+    }
+
+    @Transactional
+    public void deleteDeptManager(String deptNo, Integer empNo){
+        Department department = departmentRepository.findById(deptNo)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
+
+        Employee employee = employeeRepository.findById(empNo)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee is not found"));
+
+        DeptManager deptManager = deptManagerRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found"));
+
+        deptManagerRepository.delete(deptManager);
     }
 
 }
