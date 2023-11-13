@@ -1,9 +1,6 @@
 package com.bagas.springrestapi.controller;
 
-import com.bagas.springrestapi.model.DeptManagerResponse;
-import com.bagas.springrestapi.model.PagingResponse;
-import com.bagas.springrestapi.model.RegisterDeptManagerRequest;
-import com.bagas.springrestapi.model.WebResponse;
+import com.bagas.springrestapi.model.*;
 import com.bagas.springrestapi.service.DeptManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -84,13 +81,40 @@ public class DeptManagerController {
             path = "/departments/{deptNo}/managers/{empNo}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<String> deleteDeptManagers(@PathVariable("deptNo")String deptNo,
+    public WebResponse<String> deleteDeptManager(@PathVariable("deptNo")String deptNo,
                                                                @PathVariable("empNo")Integer empNo){
         deptManagerService.deleteDeptManager(deptNo,empNo);
 
         return WebResponse.<String>builder()
                 .data("OK")
                 .build();
+    }
+
+    @DeleteMapping(
+            path = "/departments/{deptNo}/managers",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<String> deleteDeptManagerByDeptNo(@PathVariable("deptNo")String deptNo){
+        deptManagerService.deleteDeptManagerByDeptNo(deptNo);
+
+        return WebResponse.<String>builder()
+                .data("OK")
+                .build();
+    }
+
+    @PutMapping(
+            path = "/departments/{deptNo}/managers/{empNo}",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<DeptManagerResponse> updateDeptManager(@PathVariable("deptNo")String deptNo,
+                                                              @PathVariable("empNo")Integer empNo,
+                                                              @RequestBody UpdateDeptManagerRequest request){
+        DeptManagerResponse deptManagerResponse = deptManagerService.updateDeptManager(deptNo,empNo,request);
+
+        return WebResponse.<DeptManagerResponse>builder()
+                .data(deptManagerResponse).build();
+
     }
 
 

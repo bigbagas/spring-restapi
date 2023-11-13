@@ -6,6 +6,7 @@ import com.bagas.springrestapi.entity.Employee;
 import com.bagas.springrestapi.model.DeptEmpResponse;
 import com.bagas.springrestapi.model.DeptManagerResponse;
 import com.bagas.springrestapi.model.RegisterDeptManagerRequest;
+import com.bagas.springrestapi.model.UpdateDeptManagerRequest;
 import com.bagas.springrestapi.repository.DepartmentRepository;
 import com.bagas.springrestapi.repository.DeptManagerRepository;
 import com.bagas.springrestapi.repository.EmployeeRepository;
@@ -126,6 +127,44 @@ public class DeptManagerService {
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found"));
 
         deptManagerRepository.delete(deptManager);
+    }
+
+    @Transactional
+    public void deleteDeptManagerByDeptNo(String deptNo){
+        Department department = departmentRepository.findById(deptNo)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
+
+        List<DeptManager> deptManagers = deptManagerRepository.findAllByDepartment_DeptNo(deptNo);
+
+        if (deptManagers.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found");
+        }
+
+        deptManagerRepository.deleteAll(deptManagers);
+    }
+
+
+    @Transactional
+    public DeptManagerResponse updateDeptManager(String deptNo, Integer empNo, UpdateDeptManagerRequest request){
+        Department department = departmentRepository.findById(deptNo)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
+
+        Employee employee = employeeRepository.findById(empNo)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee is not found"));
+
+        Department newDept = departmentRepository.findById(request.getDeptNo())
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "New Department is not found"));
+
+        DeptManager deptManager = deptManagerRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Department or Employee is not found"));
+
+        deptManager.setToDate(request.getToDate());
+        deptManager.setFromDate(request.getFromDate());
+        deptManager.setDepartment(newDept);
+
+        deptManagerRepository.save(deptManager);
+
+        return toDeptManagerResponse(deptManager);
     }
 
 }
