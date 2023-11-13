@@ -5,6 +5,7 @@ import com.bagas.springrestapi.entity.DeptEmp;
 import com.bagas.springrestapi.entity.Employee;
 import com.bagas.springrestapi.model.DeptEmpResponse;
 import com.bagas.springrestapi.model.RegisterDeptEmpRequest;
+import com.bagas.springrestapi.model.UpdateDeptEmpRequest;
 import com.bagas.springrestapi.model.WebResponse;
 import com.bagas.springrestapi.repository.DepartmentRepository;
 import com.bagas.springrestapi.repository.DeptEmpRepository;
@@ -654,6 +655,295 @@ class DeptEmpControllerTest {
 
 
     }
+
+    @Test
+    void updateDeptEmpSuccess() throws Exception{
+
+        Department department = new Department();
+        department.setDeptNo("B16");
+        department.setDeptName("Test"+1);
+        departmentRepository.save(department);
+
+        Department department2 = new Department();
+        department2.setDeptNo("ZX99");
+        department2.setDeptName("Test"+2);
+        departmentRepository.save(department2);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        Employee employee = new Employee();
+        employee.setBirthDate(sdf.parse("1995-08-22"));
+        employee.setFirstName("Test");
+        employee.setLastName("Test");
+        employee.setGender("M");
+        employee.setHireDate(sdf.parse("2020-09-21"));
+        employeeRepository.save(employee);
+
+        RegisterDeptEmpRequest requestInsert = new RegisterDeptEmpRequest();
+        requestInsert.setDeptNo(department.getDeptNo());
+        requestInsert.setEmpNo(employee.getEmpNo());
+        requestInsert.setFromDate(sdf.parse("2020-09-21"));
+        requestInsert.setToDate(sdf.parse("2023-09-21"));
+
+        mockMvc.perform(
+                post("/api/departments/employees")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(requestInsert))
+        );
+
+        UpdateDeptEmpRequest request = new UpdateDeptEmpRequest();
+        request.setDeptNo(department2.getDeptNo());
+        request.setFromDate(sdf.parse("2019-04-24"));
+        request.setToDate(sdf.parse("2023-01-01"));
+
+
+        //
+        mockMvc.perform(
+                put("/api/departments/"+department.getDeptNo()+"/employees/"+employee.getEmpNo())
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(request))
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+            WebResponse<DeptEmpResponse> response = objectMapper.readValue(
+                    result.getResponse().getContentAsString(), new TypeReference<>() {
+                    });
+
+            System.out.println("/api/departments/"+department.getDeptNo()+"/employees/"+employee.getEmpNo());
+            System.out.println("res "+response);
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertNull(response.getPaging());
+//
+            assertEquals(response.getData().getDeptNo(),request.getDeptNo());
+            assertEquals(response.getData().getFromDate(),request.getFromDate());
+            assertEquals(response.getData().getToDate(),request.getToDate());
+
+            DeptEmp deptEmpTest = deptEmpRepository.findById(employee.getEmpNo()).orElse(null);
+            assertNotNull(deptEmpTest);
+            assertEquals(deptEmpTest.getDepartment().getDeptNo(),request.getDeptNo());
+            assertEquals(deptEmpTest.getFromDate(),request.getFromDate());
+            assertEquals(deptEmpTest.getToDate(),request.getToDate());
+        });
+
+    }
+
+    @Test
+    void updateDeptEmpBadRequest() throws Exception{
+
+        Department department = new Department();
+        department.setDeptNo("B16");
+        department.setDeptName("Test"+1);
+        departmentRepository.save(department);
+
+        Department department2 = new Department();
+        department2.setDeptNo("ZX99");
+        department2.setDeptName("Test"+2);
+        departmentRepository.save(department2);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        Employee employee = new Employee();
+        employee.setBirthDate(sdf.parse("1995-08-22"));
+        employee.setFirstName("Test");
+        employee.setLastName("Test");
+        employee.setGender("M");
+        employee.setHireDate(sdf.parse("2020-09-21"));
+        employeeRepository.save(employee);
+
+        RegisterDeptEmpRequest requestInsert = new RegisterDeptEmpRequest();
+        requestInsert.setDeptNo(department.getDeptNo());
+        requestInsert.setEmpNo(employee.getEmpNo());
+        requestInsert.setFromDate(sdf.parse("2020-09-21"));
+        requestInsert.setToDate(sdf.parse("2023-09-21"));
+
+        mockMvc.perform(
+                post("/api/departments/employees")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(requestInsert))
+        );
+
+        UpdateDeptEmpRequest requestDeptNoTooLong = new UpdateDeptEmpRequest();
+        requestDeptNoTooLong.setDeptNo("Dept No too long. Dept No too long. Dept No too long. Dept No too long. ");
+        requestDeptNoTooLong.setFromDate(sdf.parse("2019-04-24"));
+        requestDeptNoTooLong.setToDate(sdf.parse("2023-01-01"));
+
+
+        //
+        mockMvc.perform(
+                put("/api/departments/"+department.getDeptNo()+"/employees/"+employee.getEmpNo())
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(requestDeptNoTooLong))
+        ).andExpectAll(
+                status().isBadRequest()
+        ).andDo(result -> {
+            WebResponse<DeptEmpResponse> response = objectMapper.readValue(
+                    result.getResponse().getContentAsString(), new TypeReference<>() {
+                    });
+
+            assertNotNull(response.getErrors());
+            assertNull(response.getData());
+            assertNull(response.getPaging());
+
+            DeptEmp deptEmpTest = deptEmpRepository.findById(employee.getEmpNo()).orElse(null);
+            assertNotNull(deptEmpTest);
+            assertNotEquals(deptEmpTest.getDepartment().getDeptNo(),requestDeptNoTooLong.getDeptNo());
+            assertNotEquals(deptEmpTest.getFromDate(),requestDeptNoTooLong.getFromDate());
+            assertNotEquals(deptEmpTest.getToDate(),requestDeptNoTooLong.getToDate());
+        });
+
+    }
+
+    @Test
+    void updateDeptEmpNotFound() throws Exception{
+
+        Department department = new Department();
+        department.setDeptNo("B16");
+        department.setDeptName("Test"+1);
+        departmentRepository.save(department);
+
+        Department department2 = new Department();
+        department2.setDeptNo("ZX99");
+        department2.setDeptName("Test"+2);
+        departmentRepository.save(department2);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        Employee employee = new Employee();
+        employee.setBirthDate(sdf.parse("1995-08-22"));
+        employee.setFirstName("Test");
+        employee.setLastName("Test");
+        employee.setGender("M");
+        employee.setHireDate(sdf.parse("2020-09-21"));
+        employeeRepository.save(employee);
+
+        Employee employee2 = new Employee();
+        employee2.setBirthDate(sdf.parse("1995-08-22"));
+        employee2.setFirstName("Test");
+        employee2.setLastName("Test");
+        employee2.setGender("M");
+        employee2.setHireDate(sdf.parse("2020-09-21"));
+        employeeRepository.save(employee2);
+
+        RegisterDeptEmpRequest requestInsert = new RegisterDeptEmpRequest();
+        requestInsert.setDeptNo(department.getDeptNo());
+        requestInsert.setEmpNo(employee.getEmpNo());
+        requestInsert.setFromDate(sdf.parse("2020-09-21"));
+        requestInsert.setToDate(sdf.parse("2023-09-21"));
+
+        mockMvc.perform(
+                post("/api/departments/employees")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(requestInsert))
+        );
+
+        UpdateDeptEmpRequest request = new UpdateDeptEmpRequest();
+        request.setDeptNo(department2.getDeptNo());
+        request.setFromDate(sdf.parse("2019-04-24"));
+        request.setToDate(sdf.parse("2023-01-01"));
+
+
+        //
+        mockMvc.perform(
+                put("/api/departments/"+department.getDeptNo()+"/employees/0")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+        ).andExpectAll(
+                status().isNotFound()
+        ).andDo(result -> {
+            WebResponse<DeptEmpResponse> response = objectMapper.readValue(
+                    result.getResponse().getContentAsString(), new TypeReference<>() {
+                    });
+
+            assertNotNull(response.getErrors());
+            assertNull(response.getData());
+            assertNull(response.getPaging());
+
+            DeptEmp deptEmpTest = deptEmpRepository.findById(employee.getEmpNo()).orElse(null);
+            assertNotNull(deptEmpTest);
+            assertNotEquals(deptEmpTest.getDepartment().getDeptNo(),request.getDeptNo());
+            assertNotEquals(deptEmpTest.getFromDate(),request.getFromDate());
+            assertNotEquals(deptEmpTest.getToDate(),request.getToDate());
+        });
+
+        mockMvc.perform(
+                put("/api/departments/AT14/employees/"+employee.getEmpNo())
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+        ).andExpectAll(
+                status().isNotFound()
+        ).andDo(result -> {
+            WebResponse<DeptEmpResponse> response = objectMapper.readValue(
+                    result.getResponse().getContentAsString(), new TypeReference<>() {
+                    });
+
+            assertNotNull(response.getErrors());
+            assertNull(response.getData());
+            assertNull(response.getPaging());
+
+            DeptEmp deptEmpTest = deptEmpRepository.findById(employee.getEmpNo()).orElse(null);
+            assertNotNull(deptEmpTest);
+            assertNotEquals(deptEmpTest.getDepartment().getDeptNo(),request.getDeptNo());
+            assertNotEquals(deptEmpTest.getFromDate(),request.getFromDate());
+            assertNotEquals(deptEmpTest.getToDate(),request.getToDate());
+        });
+
+        mockMvc.perform(
+                put("/api/departments/"+department2.getDeptNo()+"/employees/"+employee2.getEmpNo())
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+        ).andExpectAll(
+                status().isNotFound()
+        ).andDo(result -> {
+            WebResponse<DeptEmpResponse> response = objectMapper.readValue(
+                    result.getResponse().getContentAsString(), new TypeReference<>() {
+                    });
+
+            assertNotNull(response.getErrors());
+            assertNull(response.getData());
+            assertNull(response.getPaging());
+
+            DeptEmp deptEmpTest = deptEmpRepository.findById(employee.getEmpNo()).orElse(null);
+            assertNotNull(deptEmpTest);
+            assertNotEquals(deptEmpTest.getDepartment().getDeptNo(),request.getDeptNo());
+            assertNotEquals(deptEmpTest.getFromDate(),request.getFromDate());
+            assertNotEquals(deptEmpTest.getToDate(),request.getToDate());
+        });
+
+        mockMvc.perform(
+                put("/api/departments/AT14/employees/"+employee.getEmpNo())
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+        ).andExpectAll(
+                status().isNotFound()
+        ).andDo(result -> {
+            WebResponse<DeptEmpResponse> response = objectMapper.readValue(
+                    result.getResponse().getContentAsString(), new TypeReference<>() {
+                    });
+
+            assertNotNull(response.getErrors());
+            assertNull(response.getData());
+            assertNull(response.getPaging());
+
+            DeptEmp deptEmpTest = deptEmpRepository.findById(employee.getEmpNo()).orElse(null);
+            assertNotNull(deptEmpTest);
+            assertNotEquals(deptEmpTest.getDepartment().getDeptNo(),request.getDeptNo());
+            assertNotEquals(deptEmpTest.getFromDate(),request.getFromDate());
+            assertNotEquals(deptEmpTest.getToDate(),request.getToDate());
+        });
+
+    }
+
+
 
 
 }

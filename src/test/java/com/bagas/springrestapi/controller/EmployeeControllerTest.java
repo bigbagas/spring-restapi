@@ -152,8 +152,6 @@ class EmployeeControllerTest {
             WebResponse<EmployeeResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
             assertNotNull(response.getData());
-            System.out.println(response.getData().getBirthDate());
-            System.out.println(request.getBirthDate());
             assertEquals(response.getData().getEmpNo(),employee.getEmpNo());
             assertEquals(response.getData().getBirthDate(),request.getBirthDate());
             assertEquals(response.getData().getFirstName(),request.getFirstName());

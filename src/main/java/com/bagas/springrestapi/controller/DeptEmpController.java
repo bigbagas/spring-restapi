@@ -79,12 +79,12 @@ public class DeptEmpController {
             path = "/departments/{deptNo}/employees/{empNo}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<String> updateDeptEmp(@PathVariable("deptNo")String deptNo,
+    public WebResponse<DeptEmpResponse> updateDeptEmp(@PathVariable("deptNo")String deptNo,
                                              @PathVariable("empNo")Integer empNo,
                                              @RequestBody UpdateDeptEmpRequest request){
-        deptEmpService.updateDeptEmp(deptNo,empNo,request);
-        return WebResponse.<String>builder()
-                .data("OK")
+        DeptEmpResponse deptEmpResponse = deptEmpService.updateDeptEmp(deptNo,empNo,request);
+        return WebResponse.<DeptEmpResponse>builder()
+                .data(deptEmpResponse)
                 .build();
     }
 
