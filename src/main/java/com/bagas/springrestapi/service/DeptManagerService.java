@@ -37,7 +37,6 @@ public class DeptManagerService {
 
     public void registerDeptManager(RegisterDeptManagerRequest request){
         validationService.validate(request);
-        System.out.println(request);
 
         Department department = departmentRepository.findById(request.getDeptNo())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
@@ -45,20 +44,15 @@ public class DeptManagerService {
         Employee employee = employeeRepository.findById(request.getEmpNo())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee is not found"));
 
-
-        Optional<DeptManager> deptManagerCheck = deptManagerRepository.findByDepartment_DeptNoAndAndEmpNo(request.getDeptNo(), request.getEmpNo());
-
-        if (deptManagerCheck.isPresent()){
+        Optional<DeptManager> deptManagerCheckCurrentDept = deptManagerRepository.findByDepartment_DeptNoAndAndEmpNo(request.getDeptNo(), request.getEmpNo());
+        if (deptManagerCheckCurrentDept.isPresent()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Manager is already registered in this Department");
         }
 
-        Optional<DeptManager> deptManagerCheck2 = deptManagerRepository.findById(request.getEmpNo());
-
-        if (deptManagerCheck2.isPresent()){
+        Optional<DeptManager> deptManagerCheckOtherDept = deptManagerRepository.findById(request.getEmpNo());
+        if (deptManagerCheckOtherDept.isPresent()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Manager is already registered in other Department");
         }
-
-
 
         DeptManager deptManager = new DeptManager();
         deptManager.setFromDate(request.getFromDate());
@@ -66,11 +60,10 @@ public class DeptManagerService {
         deptManager.setDepartment(department);
         deptManager.setEmployee(employee);
         deptManagerRepository.save(deptManager);
-
     }
 
     @Transactional(readOnly = true)
-    public Page<DeptManagerResponse> getAllDeptManagers(Integer page, Integer size){
+    public Page<DeptManagerResponse> getAllDeptManager(Integer page, Integer size){
         Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
         Page<DeptManager> deptManagers = deptManagerRepository.findAll(pageable);
         List<DeptManagerResponse> deptEmpResponseList = deptManagers.stream()
@@ -135,7 +128,6 @@ public class DeptManagerService {
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
 
         List<DeptManager> deptManagers = deptManagerRepository.findAllByDepartment_DeptNo(deptNo);
-
         if (deptManagers.isEmpty()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found");
         }
@@ -161,9 +153,7 @@ public class DeptManagerService {
         deptManager.setToDate(request.getToDate());
         deptManager.setFromDate(request.getFromDate());
         deptManager.setDepartment(newDept);
-
         deptManagerRepository.save(deptManager);
-
         return toDeptManagerResponse(deptManager);
     }
 

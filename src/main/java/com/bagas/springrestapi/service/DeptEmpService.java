@@ -41,22 +41,20 @@ public class DeptEmpService {
     @Transactional
     public void registerDeptEmp (RegisterDeptEmpRequest request){
         validationService.validate(request);
-        System.out.println(request);
+
         Department department = departmentRepository.findById(request.getDeptNo())
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
 
         Employee employee = employeeRepository.findById(request.getEmpNo())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee is not found"));
 
-        Optional<DeptEmp> deptEmpCheck = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(request.getDeptNo(),request.getEmpNo());
-
-        if (deptEmpCheck.isPresent()){
+        Optional<DeptEmp> deptEmpCheckCurrentDept = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(request.getDeptNo(),request.getEmpNo());
+        if (deptEmpCheckCurrentDept.isPresent()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Employee is already register is this Department");
         }
 
-        Optional<DeptEmp> deptEmpCheck2 = deptEmpRepository.findById(request.getEmpNo());
-
-        if (deptEmpCheck2.isPresent()){
+        Optional<DeptEmp> deptEmpCheckOtherDept = deptEmpRepository.findById(request.getEmpNo());
+        if (deptEmpCheckOtherDept.isPresent()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Employee is already register in other Department");
         }
 
@@ -65,12 +63,13 @@ public class DeptEmpService {
         deptEmp.setToDate(request.getToDate());
         deptEmp.setDepartment(department);
         deptEmp.setEmployee(employee);
-
         deptEmpRepository.save(deptEmp);
     }
 
     @Transactional(readOnly = true)
-    public Page<DeptEmpResponse> deptEmpAllEmployeeByDeptNo(String deptNo, Integer page, Integer size){
+    public Page<DeptEmpResponse> getDeptEmpByDeptNo(String deptNo, Integer page, Integer size){
+        Department department = departmentRepository.findById(deptNo)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
 
         Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
         Page<DeptEmp> deptEmps = deptEmpRepository.findByDepartment_DeptNo(deptNo,pageable);
@@ -90,8 +89,7 @@ public class DeptEmpService {
     }
 //
     @Transactional(readOnly = true)
-    public Page<DeptEmpResponse> deptEmpAllEmployee( Integer page, Integer size){
-
+    public Page<DeptEmpResponse> getAllDeptEmp(Integer page, Integer size){
         Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
         Page<DeptEmp> deptEmps = deptEmpRepository.findAll(pageable);
         List<DeptEmpResponse> deptEmpResponseList = deptEmps.stream()
@@ -102,41 +100,49 @@ public class DeptEmpService {
 
     @Transactional(readOnly = true)
     public DeptEmpResponse deptEmpByDeptNoAndEmpNo(String deptNo, Integer empNo){
+        Department department = departmentRepository.findById(deptNo)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not Found"));
+
+        Employee employee = employeeRepository.findById(empNo)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee is not found"));
+
         DeptEmp deptEmp = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
-                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Department No or Employee No is not found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found"));
 
-//        Optional<DeptEmp> deptEmp = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo);
-
-//        if (deptEmp.isEmpty()){
-//           throw  new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found");
-//        }
-        System.out.println(deptEmp);
         return toDeptEmpResponse(deptEmp);
-
-
     }
 
     @Transactional
     public DeptEmpResponse updateDeptEmp (String deptNo, Integer empNo,UpdateDeptEmpRequest request){
         validationService.validate(request);
 
+        Department department = departmentRepository.findById(deptNo)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not Found"));
+
+        Employee employee = employeeRepository.findById(empNo)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee is not found"));
+
+        Department newDept = departmentRepository.findById(request.getDeptNo())
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"New Department is not found"));
+
         DeptEmp deptEmp = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found"));
 
-        Department department = departmentRepository.findById(request.getDeptNo())
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
-
         deptEmp.setFromDate(request.getFromDate());
         deptEmp.setToDate(request.getToDate());
-        deptEmp.setDepartment(department);
-
+        deptEmp.setDepartment(newDept);
         deptEmpRepository.save(deptEmp);
-
         return toDeptEmpResponse(deptEmp);
     }
 
     @Transactional
     public void deleteDeptEmp(String deptNo,Integer empNo){
+        Department department = departmentRepository.findById(deptNo)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not Found"));
+
+        Employee employee = employeeRepository.findById(empNo)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee is not found"));
+
         DeptEmp deptEmp = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found"));
 

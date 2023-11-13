@@ -22,8 +22,6 @@ public class DeptManagerController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public WebResponse<String> registerDeptManager(@RequestBody RegisterDeptManagerRequest request){
-
-        System.out.println(request);
         deptManagerService.registerDeptManager(request);
 
         return WebResponse.<String>builder().data("OK").build();
@@ -33,9 +31,9 @@ public class DeptManagerController {
             path = "/departments/managers",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<List<DeptManagerResponse>> getAllDeptManagers(@RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
-                                                                     @RequestParam(value = "size",required = false,defaultValue = "10")Integer size){
-        Page<DeptManagerResponse> deptManagerResponses = deptManagerService.getAllDeptManagers(page,size);
+    public WebResponse<List<DeptManagerResponse>> getAllDeptManager(@RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
+                                                                    @RequestParam(value = "size",required = false,defaultValue = "10")Integer size){
+        Page<DeptManagerResponse> deptManagerResponses = deptManagerService.getAllDeptManager(page,size);
 
         return WebResponse.<List<DeptManagerResponse>>builder()
                 .data(deptManagerResponses.getContent())
@@ -50,9 +48,9 @@ public class DeptManagerController {
             path = "/departments/{deptNo}/managers",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<List<DeptManagerResponse>> getDeptManagersByDeptNo(@RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
-                                                                          @RequestParam(value = "size",required = false,defaultValue = "10")Integer size,
-                                                                          @PathVariable("deptNo")String deptNo){
+    public WebResponse<List<DeptManagerResponse>> getDeptManagerByDeptNo(@RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
+                                                                         @RequestParam(value = "size",required = false,defaultValue = "10")Integer size,
+                                                                         @PathVariable("deptNo")String deptNo){
         Page<DeptManagerResponse> deptManagerResponses = deptManagerService.getDeptManagerByDeptNo(deptNo,page,size);
 
         return WebResponse.<List<DeptManagerResponse>>builder()
@@ -68,8 +66,8 @@ public class DeptManagerController {
             path = "/departments/{deptNo}/managers/{empNo}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<DeptManagerResponse> getDeptManagersByDeptNoAndEmpNo(@PathVariable("deptNo")String deptNo,
-                                                                    @PathVariable("empNo")Integer empNo){
+    public WebResponse<DeptManagerResponse> getDeptManagerByDeptNoAndEmpNo(@PathVariable("deptNo")String deptNo,
+                                                                           @PathVariable("empNo")Integer empNo){
         DeptManagerResponse deptManagerResponses = deptManagerService.getDeptManagerByDeptNoAndEmpNo(deptNo,empNo);
 
         return WebResponse.<DeptManagerResponse>builder()
