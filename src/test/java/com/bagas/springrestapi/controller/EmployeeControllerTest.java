@@ -303,7 +303,7 @@ class EmployeeControllerTest {
 
 
         mockMvc.perform(
-                get("/api/employees/1")
+                get("/api/employees/0")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
         ).andExpectAll(status().isNotFound()
         ).andDo(result -> {
