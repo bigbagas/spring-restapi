@@ -87,4 +87,14 @@ public class DeptManagerService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
+    public Page<DeptManagerResponse> getDeptManagerByDeptNo(String deptNo,Integer page, Integer size){
+        Pageable pageable = PageRequest.of(page,size,Sort.by("empNo").ascending());
+        Page<DeptManager> deptManagers = deptManagerRepository.findByDepartment_DeptNo(deptNo,pageable);
+        List<DeptManagerResponse> deptManagerResponseList = deptManagers.stream()
+                .map(this::toDeptManagerResponse).toList();
+
+        return new PageImpl<>(deptManagerResponseList,pageable,deptManagers.getTotalElements());
+    }
+
 }
