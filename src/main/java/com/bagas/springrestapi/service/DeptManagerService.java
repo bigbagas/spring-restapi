@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -138,15 +139,23 @@ public class DeptManagerService {
         Employee employee = employeeRepository.findById(empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee is not found"));
 
-        Department newDept = departmentRepository.findById(request.getDeptNo())
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "New Department is not found"));
-
         DeptManager deptManager = deptManagerRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Department or Employee is not found"));
 
-        deptManager.setToDate(request.getToDate());
-        deptManager.setFromDate(request.getFromDate());
-        deptManager.setDepartment(newDept);
+        if (Objects.nonNull(request.getFromDate())){
+            deptManager.setFromDate(request.getFromDate());
+        }
+
+        if (Objects.nonNull(request.getToDate())){
+            deptManager.setToDate(request.getToDate());
+        }
+
+        if (Objects.nonNull(request.getDeptNo())){
+            Department newDept = departmentRepository.findById(request.getDeptNo())
+                    .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"New Department is not found"));
+            deptManager.setDepartment(newDept);
+        }
+
         deptManagerRepository.save(deptManager);
         return toDeptManagerResponse(deptManager);
     }

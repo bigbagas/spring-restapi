@@ -119,14 +119,23 @@ public class DeptEmpService {
         Employee employee = employeeRepository.findById(empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee is not found"));
 
-        Department newDept = departmentRepository.findById(request.getDeptNo())
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"New Department is not found"));
-
         DeptEmp deptEmp = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found"));
-        deptEmp.setFromDate(request.getFromDate());
-        deptEmp.setToDate(request.getToDate());
-        deptEmp.setDepartment(newDept);
+
+        if (Objects.nonNull(request.getFromDate())){
+            deptEmp.setFromDate(request.getFromDate());
+        }
+
+        if (Objects.nonNull(request.getToDate())){
+            deptEmp.setToDate(request.getToDate());
+        }
+
+        if (Objects.nonNull(request.getDeptNo())){
+            Department newDept = departmentRepository.findById(request.getDeptNo())
+                    .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"New Department is not found"));
+            deptEmp.setDepartment(newDept);
+        }
+
         deptEmpRepository.save(deptEmp);
         return toDeptEmpResponse(deptEmp);
     }
