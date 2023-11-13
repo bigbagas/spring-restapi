@@ -1,6 +1,7 @@
 package com.bagas.springrestapi.service;
 
 import com.bagas.springrestapi.entity.DeptEmp;
+import com.bagas.springrestapi.entity.DeptManager;
 import com.bagas.springrestapi.entity.Employee;
 import com.bagas.springrestapi.enums.Gender;
 import com.bagas.springrestapi.model.DeptEmpResponse;
@@ -8,6 +9,7 @@ import com.bagas.springrestapi.model.EmployeeResponse;
 import com.bagas.springrestapi.model.RegisterEmployeeRequest;
 import com.bagas.springrestapi.model.UpdateEmployeeRequest;
 import com.bagas.springrestapi.repository.DeptEmpRepository;
+import com.bagas.springrestapi.repository.DeptManagerRepository;
 import com.bagas.springrestapi.repository.EmployeeRepository;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,9 @@ public class EmployeeService {
 
     @Autowired
     private DeptEmpRepository deptEmpRepository;
+
+    @Autowired
+    private DeptManagerRepository deptManagerRepository;
 
     @Transactional
     public void registerEmployee(RegisterEmployeeRequest request){
@@ -142,6 +147,11 @@ public class EmployeeService {
 
         if (deptEmp.isPresent()){
             deptEmpRepository.delete(deptEmp.get());
+        }
+
+        Optional<DeptManager> deptManager = deptManagerRepository.findById(empNo);
+        if (deptManager.isPresent()){
+            deptManagerRepository.delete(deptManager.get());
         }
 
         employeeRepository.delete(employee);
