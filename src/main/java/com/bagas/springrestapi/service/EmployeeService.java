@@ -42,7 +42,6 @@ public class EmployeeService {
 
     @Transactional
     public void registerEmployee(RegisterEmployeeRequest request){
-
         validationService.validate(request);
 
         Optional<Employee> employeeCheck = employeeRepository
@@ -53,7 +52,6 @@ public class EmployeeService {
                         request.getHireDate(),
                         request.getGender()
                 );
-
         if (employeeCheck.isPresent()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Employee already registered");
         }
@@ -62,16 +60,11 @@ public class EmployeeService {
         employee.setBirthDate(request.getBirthDate());
         employee.setFirstName(request.getFirstName());
         employee.setLastName(request.getLastName());
-        System.out.println(request.getGender());
         if (request.getGender().equalsIgnoreCase("M")){
-
             employee.setGender(Gender.M.name());
         }else if (request.getGender().equalsIgnoreCase("F")){
             employee.setGender(Gender.F.name());
         }
-
-
-
         employee.setHireDate(request.getHireDate());
         employeeRepository.save(employee);
     }
@@ -108,12 +101,7 @@ public class EmployeeService {
         }
 
         employeeRepository.save(employee);
-
         return toEmployeeResponse(employee);
-
-
-
-
     }
 
     private EmployeeResponse toEmployeeResponse(Employee employee){
@@ -129,22 +117,17 @@ public class EmployeeService {
 
     @Transactional(readOnly = true)
     public EmployeeResponse getEmployeeByEmpNo(Integer empNo){
-
         Employee employeeByEmpNo = employeeRepository.findById(empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee is not found"));
-
         return toEmployeeResponse(employeeByEmpNo);
-
     }
 
     @Transactional
     public void deleteEmployee(Integer empNo){
-
         Employee employee = employeeRepository.findById(empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee is not found"));
 
         Optional<DeptEmp> deptEmp = deptEmpRepository.findById(empNo);
-
         if (deptEmp.isPresent()){
             deptEmpRepository.delete(deptEmp.get());
         }
@@ -161,7 +144,6 @@ public class EmployeeService {
     public Page<EmployeeResponse> allEmployee(Integer page, Integer size){
         Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
         Page<Employee> employees = employeeRepository.findAll(pageable);
-
         List<EmployeeResponse> employeeResponseList = employees.getContent().stream()
                 .map(this::toEmployeeResponse).toList();
         return new PageImpl<>(employeeResponseList,pageable,employees.getTotalElements());
@@ -190,9 +172,6 @@ public class EmployeeService {
         Page<Employee> employees = employeeRepository.findAll(specification,pageable);
         List<EmployeeResponse> employeeResponseList = employees.getContent().stream()
                 .map(this::toEmployeeResponse).toList();
-
         return new PageImpl<>(employeeResponseList,pageable,employees.getTotalElements());
-
-
     }
 }

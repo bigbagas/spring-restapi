@@ -68,7 +68,6 @@ public class DeptManagerService {
         Page<DeptManager> deptManagers = deptManagerRepository.findAll(pageable);
         List<DeptManagerResponse> deptEmpResponseList = deptManagers.stream()
                 .map(this::toDeptManagerResponse).toList();
-
         return new PageImpl<>(deptEmpResponseList,pageable,deptManagers.getTotalElements());
     }
 
@@ -90,7 +89,6 @@ public class DeptManagerService {
         Page<DeptManager> deptManagers = deptManagerRepository.findByDepartment_DeptNo(deptNo,pageable);
         List<DeptManagerResponse> deptManagerResponseList = deptManagers.stream()
                 .map(this::toDeptManagerResponse).toList();
-
         return new PageImpl<>(deptManagerResponseList,pageable,deptManagers.getTotalElements());
     }
 
@@ -104,7 +102,6 @@ public class DeptManagerService {
 
         DeptManager deptManager = deptManagerRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found"));
-
         return toDeptManagerResponse(deptManager);
     }
 
@@ -118,23 +115,20 @@ public class DeptManagerService {
 
         DeptManager deptManager = deptManagerRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found"));
-
         deptManagerRepository.delete(deptManager);
     }
 
-    @Transactional
-    public void deleteDeptManagerByDeptNo(String deptNo){
-        Department department = departmentRepository.findById(deptNo)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
-
-        List<DeptManager> deptManagers = deptManagerRepository.findAllByDepartment_DeptNo(deptNo);
-        if (deptManagers.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found");
-        }
-
-        deptManagerRepository.deleteAll(deptManagers);
-    }
-
+//    @Transactional
+//    public void deleteDeptManagerByDeptNo(String deptNo){
+//        Department department = departmentRepository.findById(deptNo)
+//                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
+//
+//        List<DeptManager> deptManagers = deptManagerRepository.findAllByDepartment_DeptNo(deptNo);
+//        if (deptManagers.isEmpty()){
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found");
+//        }
+//        deptManagerRepository.deleteAll(deptManagers);
+//    }
 
     @Transactional
     public DeptManagerResponse updateDeptManager(String deptNo, Integer empNo, UpdateDeptManagerRequest request){

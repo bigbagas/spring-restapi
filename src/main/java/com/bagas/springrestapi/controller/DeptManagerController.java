@@ -23,8 +23,9 @@ public class DeptManagerController {
     )
     public WebResponse<String> registerDeptManager(@RequestBody RegisterDeptManagerRequest request){
         deptManagerService.registerDeptManager(request);
-
-        return WebResponse.<String>builder().data("OK").build();
+        return WebResponse.<String>builder()
+                .data("OK")
+                .build();
     }
 
     @GetMapping(
@@ -34,13 +35,13 @@ public class DeptManagerController {
     public WebResponse<List<DeptManagerResponse>> getAllDeptManager(@RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
                                                                     @RequestParam(value = "size",required = false,defaultValue = "10")Integer size){
         Page<DeptManagerResponse> deptManagerResponses = deptManagerService.getAllDeptManager(page,size);
-
         return WebResponse.<List<DeptManagerResponse>>builder()
                 .data(deptManagerResponses.getContent())
                 .paging(PagingResponse.builder()
                         .currentPage(deptManagerResponses.getNumber())
                         .totalPage(deptManagerResponses.getTotalPages())
-                        .size((int) deptManagerResponses.getTotalElements()).build())
+                        .size((int) deptManagerResponses.getTotalElements())
+                        .build())
                 .build();
     }
 
@@ -52,13 +53,13 @@ public class DeptManagerController {
                                                                          @RequestParam(value = "size",required = false,defaultValue = "10")Integer size,
                                                                          @PathVariable("deptNo")String deptNo){
         Page<DeptManagerResponse> deptManagerResponses = deptManagerService.getDeptManagerByDeptNo(deptNo,page,size);
-
         return WebResponse.<List<DeptManagerResponse>>builder()
                 .data(deptManagerResponses.getContent())
                 .paging(PagingResponse.builder()
                         .currentPage(deptManagerResponses.getNumber())
                         .totalPage(deptManagerResponses.getTotalPages())
-                        .size((int) deptManagerResponses.getTotalElements()).build())
+                        .size((int) deptManagerResponses.getTotalElements())
+                        .build())
                 .build();
     }
 
@@ -69,7 +70,6 @@ public class DeptManagerController {
     public WebResponse<DeptManagerResponse> getDeptManagerByDeptNoAndEmpNo(@PathVariable("deptNo")String deptNo,
                                                                            @PathVariable("empNo")Integer empNo){
         DeptManagerResponse deptManagerResponses = deptManagerService.getDeptManagerByDeptNoAndEmpNo(deptNo,empNo);
-
         return WebResponse.<DeptManagerResponse>builder()
                 .data(deptManagerResponses)
                 .build();
@@ -82,23 +82,21 @@ public class DeptManagerController {
     public WebResponse<String> deleteDeptManager(@PathVariable("deptNo")String deptNo,
                                                                @PathVariable("empNo")Integer empNo){
         deptManagerService.deleteDeptManager(deptNo,empNo);
-
         return WebResponse.<String>builder()
                 .data("OK")
                 .build();
     }
 
-    @DeleteMapping(
-            path = "/departments/{deptNo}/managers",
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public WebResponse<String> deleteDeptManagerByDeptNo(@PathVariable("deptNo")String deptNo){
-        deptManagerService.deleteDeptManagerByDeptNo(deptNo);
-
-        return WebResponse.<String>builder()
-                .data("OK")
-                .build();
-    }
+//    @DeleteMapping(
+//            path = "/departments/{deptNo}/managers",
+//            produces = MediaType.APPLICATION_JSON_VALUE
+//    )
+//    public WebResponse<String> deleteDeptManagerByDeptNo(@PathVariable("deptNo")String deptNo){
+//        deptManagerService.deleteDeptManagerByDeptNo(deptNo);
+//        return WebResponse.<String>builder()
+//                .data("OK")
+//                .build();
+//    }
 
     @PutMapping(
             path = "/departments/{deptNo}/managers/{empNo}",
@@ -111,10 +109,8 @@ public class DeptManagerController {
         DeptManagerResponse deptManagerResponse = deptManagerService.updateDeptManager(deptNo,empNo,request);
 
         return WebResponse.<DeptManagerResponse>builder()
-                .data(deptManagerResponse).build();
-
+                .data(deptManagerResponse)
+                .build();
     }
-
-
 
 }

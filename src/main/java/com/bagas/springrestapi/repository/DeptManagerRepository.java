@@ -18,5 +18,4 @@ public interface DeptManagerRepository extends JpaRepository<DeptManager,Integer
 
     List<DeptManager> findAllByDepartment_DeptNo(String deptNo);
 
-    DeptManager deleteByDepartment_DeptNo(String deptNo);
 }

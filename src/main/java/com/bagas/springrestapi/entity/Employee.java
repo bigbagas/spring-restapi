@@ -33,10 +33,8 @@ public class Employee {
     @Column(length = 16)
     private String lastName;
 
-
     @Column(length = 1)
     private String gender;
-
 
     @Temporal(TemporalType.DATE)
     private Date hireDate;

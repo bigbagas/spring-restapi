@@ -75,7 +75,6 @@ public class DeptEmpService {
         Page<DeptEmp> deptEmps = deptEmpRepository.findByDepartment_DeptNo(deptNo,pageable);
         List<DeptEmpResponse> deptEmpResponseList = deptEmps.stream()
                 .map(this::toDeptEmpResponse).toList();
-
         return new PageImpl<>(deptEmpResponseList,pageable,deptEmps.getTotalElements());
     }
 
@@ -87,14 +86,13 @@ public class DeptEmpService {
                 .toDate(deptEmp.getToDate())
                 .build();
     }
-//
+
     @Transactional(readOnly = true)
     public Page<DeptEmpResponse> getAllDeptEmp(Integer page, Integer size){
         Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
         Page<DeptEmp> deptEmps = deptEmpRepository.findAll(pageable);
         List<DeptEmpResponse> deptEmpResponseList = deptEmps.stream()
                 .map(this::toDeptEmpResponse).toList();
-
         return new PageImpl<>(deptEmpResponseList,pageable,deptEmps.getTotalElements());
     }
 
@@ -108,7 +106,6 @@ public class DeptEmpService {
 
         DeptEmp deptEmp = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found"));
-
         return toDeptEmpResponse(deptEmp);
     }
 
@@ -127,7 +124,6 @@ public class DeptEmpService {
 
         DeptEmp deptEmp = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found"));
-
         deptEmp.setFromDate(request.getFromDate());
         deptEmp.setToDate(request.getToDate());
         deptEmp.setDepartment(newDept);
@@ -145,9 +141,7 @@ public class DeptEmpService {
 
         DeptEmp deptEmp = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found"));
-
         deptEmpRepository.delete(deptEmp);
     }
-
 
 }

@@ -45,10 +45,10 @@ public class DepartmentService {
         validationService.validate(request);
 
         Optional<Department> dept = departmentRepository.findById(request.getDeptNo());
-
         if (dept.isPresent()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Department No is already registered");
         }
+
         Department department = new Department();
         department.setDeptNo(request.getDeptNo());
         department.setDeptName(request.getDeptName());
@@ -66,34 +66,26 @@ public class DepartmentService {
             department.setDeptName(request.getDeptName());
             departmentRepository.save(department);
         }
-
         return toDepartmentResponse(department);
-
-
     }
 
     private DepartmentResponse toDepartmentResponse(Department department){
         return DepartmentResponse.builder()
                 .deptNo(department.getDeptNo())
-                .deptName(department.getDeptName()).build();
+                .deptName(department.getDeptName())
+                .build();
     }
 
     @Transactional(readOnly = true)
     public DepartmentResponse getDepartmentByDeptNo(String deptNo){
-
         Department department = departmentRepository.findById(deptNo)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
-
         return toDepartmentResponse(department);
-
-
     }
 
     @Transactional
     public void deleteDepartment(String deptNo){
-
         List<DeptEmp> deptEmps = deptEmpRepository.findAllByDepartment_DeptNo(deptNo);
-
         if (!deptEmps.isEmpty()){
             deptEmpRepository.deleteAll(deptEmps);
         }
@@ -105,7 +97,6 @@ public class DepartmentService {
 
         Department department = departmentRepository.findById(deptNo)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
-
         departmentRepository.delete(department);
     }
 
@@ -113,7 +104,6 @@ public class DepartmentService {
     public Page<DepartmentResponse> searchDepartment(String keyword, Integer page, Integer size){
         Specification<Department> specification = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-
             if (Objects.nonNull(keyword)){
                 predicates.add(criteriaBuilder.or(
                         criteriaBuilder.like(
@@ -131,8 +121,7 @@ public class DepartmentService {
         Page<Department> departments = departmentRepository.findAll(specification,pageable);
         List<DepartmentResponse> departmentResponseList = departments.stream()
                 .map(this::toDepartmentResponse).toList();
-
         return new PageImpl<>(departmentResponseList,pageable,departments.getTotalElements());
-
     }
+
 }

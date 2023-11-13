@@ -24,7 +24,8 @@ public class DeptEmpController {
     public WebResponse<String> registerDeptEmp(@RequestBody RegisterDeptEmpRequest request){
         deptEmpService.registerDeptEmp(request);
         return WebResponse.<String>builder()
-                .data("OK").build();
+                .data("OK")
+                .build();
     }
 
     @GetMapping(
@@ -40,7 +41,8 @@ public class DeptEmpController {
                 .paging(PagingResponse.builder()
                         .currentPage(deptEmpResponses.getNumber())
                         .totalPage(deptEmpResponses.getTotalPages())
-                        .size((int) deptEmpResponses.getTotalElements()).build())
+                        .size((int) deptEmpResponses.getTotalElements())
+                        .build())
                 .build();
     }
 
@@ -56,7 +58,8 @@ public class DeptEmpController {
                 .paging(PagingResponse.builder()
                         .currentPage(deptEmpResponses.getNumber())
                         .totalPage(deptEmpResponses.getTotalPages())
-                        .size((int) deptEmpResponses.getTotalElements()).build())
+                        .size((int) deptEmpResponses.getTotalElements())
+                        .build())
                 .build();
     }
 
@@ -67,7 +70,9 @@ public class DeptEmpController {
     public WebResponse<DeptEmpResponse> getDeptEmpByDeptNoAndEmpNo(@PathVariable("deptNo") String deptNo,
                                                                    @PathVariable("empNo")Integer empNo){
         DeptEmpResponse deptEmpResponse = deptEmpService.deptEmpByDeptNoAndEmpNo(deptNo,empNo);
-        return WebResponse.<DeptEmpResponse>builder().data(deptEmpResponse).build();
+        return WebResponse.<DeptEmpResponse>builder()
+                .data(deptEmpResponse)
+                .build();
     }
 
     @PutMapping(
@@ -79,7 +84,8 @@ public class DeptEmpController {
                                              @RequestBody UpdateDeptEmpRequest request){
         deptEmpService.updateDeptEmp(deptNo,empNo,request);
         return WebResponse.<String>builder()
-                .data("OK").build();
+                .data("OK")
+                .build();
     }
 
     @DeleteMapping(
@@ -90,8 +96,8 @@ public class DeptEmpController {
                                              @PathVariable("empNo")Integer empNo){
         deptEmpService.deleteDeptEmp(deptNo,empNo);
         return WebResponse.<String>builder()
-                .data("OK").build();
+                .data("OK")
+                .build();
     }
-
 
 }

@@ -20,8 +20,6 @@ public class ErrorController {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<WebResponse<String>> constraintViolationException(ConstraintViolationException exception) {
-        System.out.println(exception.getMessage());
-        System.out.println(exception.getLocalizedMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(WebResponse.<String>builder().errors(exception.getMessage()).build());
     }
@@ -40,8 +38,6 @@ public class ErrorController {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-
-
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(WebResponse.<String>builder().errors(errors.toString()).build());
 
