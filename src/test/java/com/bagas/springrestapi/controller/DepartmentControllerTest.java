@@ -364,32 +364,184 @@ class DepartmentControllerTest {
         });
     }
 
-//    @Test
-//    void gatAllDepartmentSuccess() throws Exception{
-//        for (int i = 0; i < 100; i++) {
-//            Department department = new Department();
-//            department.setDeptNo(String.valueOf(i));
-//            department.setDeptName("TEST"+1);
-//            departmentRepository.save(department);
-//
-//        }
-//
-//        mockMvc.perform(
-//                get("/api/departments")
-//                        .accept(MediaType.APPLICATION_JSON_VALUE)
-//        ).andExpectAll(
-//                status().isOk()
-//        ).andDo(result -> {
-//            WebResponse<List<WebResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
-//            });
-//            assertNotNull(response.getData());
-//            assertNull(response.getErrors());
-//            assertNotNull(response.getPaging());
-//            assertEquals(10,response.getData().size());
-//            assertEquals(10,response.getPaging().getTotalPage());
-//            assertEquals(0,response.getPaging().getCurrentPage());
-//            assertEquals(100,response.getPaging().getSize());
-//        });
-//    }
+    @Test
+    void gatAllDepartmentSuccess() throws Exception{
+        for (int i = 0; i < 100; i++) {
+            Department department = new Department();
+            department.setDeptNo(String.valueOf(i));
+            department.setDeptName("TEST"+1);
+            departmentRepository.save(department);
+
+        }
+
+        mockMvc.perform(
+                get("/api/departments")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<WebResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertNotNull(response.getPaging());
+            assertEquals(10,response.getData().size());
+            assertEquals(10,response.getPaging().getTotalPage());
+            assertEquals(0,response.getPaging().getCurrentPage());
+            assertEquals(100,response.getPaging().getSize());
+        });
+    }
+
+    @Test
+    void searchDepartmentNotFound() throws Exception{
+        for (int i = 0; i < 100; i++) {
+            Department department = new Department();
+            department.setDeptNo("K"+i);
+            department.setDeptName("TEST"+i);
+            departmentRepository.save(department);
+
+        }
+
+        mockMvc.perform(
+                get("/api/departments/search?keyword=NOTFOUND")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<WebResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertNotNull(response.getPaging());
+            assertEquals(0,response.getData().size());
+            assertEquals(0,response.getPaging().getTotalPage());
+            assertEquals(0,response.getPaging().getCurrentPage());
+            assertEquals(0,response.getPaging().getSize());
+        });
+
+    }
+
+    @Test
+    void searchDepartmentSuccess() throws Exception{
+        for (int i = 0; i < 100; i++) {
+            Department department = new Department();
+            department.setDeptNo("K"+i);
+            department.setDeptName("TEST"+i);
+            departmentRepository.save(department);
+
+        }
+
+        for (int i = 0; i < 100; i++) {
+            Department department1 = new Department();
+            department1.setDeptNo("D"+i);
+            department1.setDeptName("DATA TEST "+i);
+            departmentRepository.save(department1);
+
+        }
+
+        mockMvc.perform(
+                get("/api/departments/search?keyword")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<WebResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertNotNull(response.getPaging());
+            assertEquals(10,response.getData().size());
+            assertEquals(20,response.getPaging().getTotalPage());
+            assertEquals(0,response.getPaging().getCurrentPage());
+            assertEquals(200,response.getPaging().getSize());
+        });
+
+        mockMvc.perform(
+                get("/api/departments/search?keyword=K")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<WebResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertNotNull(response.getPaging());
+            assertEquals(10,response.getData().size());
+            assertEquals(10,response.getPaging().getTotalPage());
+            assertEquals(0,response.getPaging().getCurrentPage());
+            assertEquals(100,response.getPaging().getSize());
+        });
+
+        mockMvc.perform(
+                get("/api/departments/search?keyword=DAta")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<WebResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertNotNull(response.getPaging());
+            assertEquals(10,response.getData().size());
+            assertEquals(10,response.getPaging().getTotalPage());
+            assertEquals(0,response.getPaging().getCurrentPage());
+            assertEquals(100,response.getPaging().getSize());
+        });
+
+        mockMvc.perform(
+                get("/api/departments/search?keyword=TEST")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<WebResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertNotNull(response.getPaging());
+            assertEquals(10,response.getData().size());
+            assertEquals(20,response.getPaging().getTotalPage());
+            assertEquals(0,response.getPaging().getCurrentPage());
+            assertEquals(200,response.getPaging().getSize());
+        });
+
+        mockMvc.perform(
+                get("/api/departments/search?keyword=TEST&page=6&size=10")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<WebResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertNotNull(response.getPaging());
+            assertEquals(10,response.getData().size());
+            assertEquals(20,response.getPaging().getTotalPage());
+            assertEquals(6,response.getPaging().getCurrentPage());
+            assertEquals(200,response.getPaging().getSize());
+        });
+
+        mockMvc.perform(
+                get("/api/departments/search?keyword=DAta&page=3&size=20")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<WebResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
+            assertNotNull(response.getPaging());
+            assertEquals(20,response.getData().size());
+            assertEquals(5,response.getPaging().getTotalPage());
+            assertEquals(3,response.getPaging().getCurrentPage());
+            assertEquals(100,response.getPaging().getSize());
+        });
+
+
+    }
 
 }
