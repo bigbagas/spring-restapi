@@ -124,4 +124,14 @@ public class DepartmentService {
         return new PageImpl<>(departmentResponseList,pageable,departments.getTotalElements());
     }
 
+    @Transactional(readOnly = true)
+    public Page<DepartmentResponse> getAllDepartment(Integer page, Integer size){
+        Pageable pageable = PageRequest.of(page,size,Sort.by("deptNo").ascending());
+        Page<Department> departments = departmentRepository.findAll(pageable);
+        List<DepartmentResponse> departmentResponseList = departments.getContent().stream()
+                .map(this::toDepartmentResponse).toList();
+        return new PageImpl<>(departmentResponseList,pageable,departments.getTotalElements());
+    }
+
+
 }

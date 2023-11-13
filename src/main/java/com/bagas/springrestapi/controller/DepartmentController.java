@@ -79,4 +79,21 @@ public class DepartmentController {
                 .build();
     }
 
+    @GetMapping(
+            path = "/departments",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<List<DepartmentResponse>> getAllDepartment(@RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
+                                                           @RequestParam(value = "size",required = false,defaultValue = "10")Integer size){
+        Page<DepartmentResponse> departmentResponses = departmentService.getAllDepartment(page,size);
+        return WebResponse.<List<DepartmentResponse>>builder()
+                .data(departmentResponses.getContent())
+                .paging(PagingResponse.builder()
+                        .currentPage(departmentResponses.getNumber())
+                        .totalPage(departmentResponses.getTotalPages())
+                        .size((int) departmentResponses.getTotalElements())
+                        .build())
+                .build();
+    }
+
 }
