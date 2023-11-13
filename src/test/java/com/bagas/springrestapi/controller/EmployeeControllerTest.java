@@ -4,6 +4,9 @@ import com.bagas.springrestapi.entity.Employee;
 import com.bagas.springrestapi.model.EmployeeResponse;
 import com.bagas.springrestapi.model.RegisterEmployeeRequest;
 import com.bagas.springrestapi.model.WebResponse;
+import com.bagas.springrestapi.repository.DepartmentRepository;
+import com.bagas.springrestapi.repository.DeptEmpRepository;
+import com.bagas.springrestapi.repository.DeptManagerRepository;
 import com.bagas.springrestapi.repository.EmployeeRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,13 +33,26 @@ class EmployeeControllerTest {
     private EmployeeRepository employeeRepository;
 
     @Autowired
+    private DeptEmpRepository deptEmpRepository;
+
+    @Autowired
+    private DeptManagerRepository deptManagerRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
+    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @BeforeEach
-    void setUp(){
+    void setUp() throws InterruptedException {
+
+        deptEmpRepository.deleteAll();
+        deptManagerRepository.deleteAll();
+        departmentRepository.deleteAll();
         employeeRepository.deleteAll();
     }
 
@@ -378,7 +394,7 @@ class EmployeeControllerTest {
 
 
         mockMvc.perform(
-                get("/api/employees/search/all")
+                get("/api/employees")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
         ).andExpectAll(status().isOk()
         ).andDo(result -> {

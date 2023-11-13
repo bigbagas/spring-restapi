@@ -41,7 +41,6 @@ public class DepartmentController {
 
     @GetMapping(
             path = "/departments/{deptNo}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     private WebResponse<DepartmentResponse> getDepartmentByDeptNo(@PathVariable String deptNo){
