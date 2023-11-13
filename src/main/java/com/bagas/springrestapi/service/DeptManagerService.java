@@ -133,6 +133,7 @@ public class DeptManagerService {
 
     @Transactional
     public DeptManagerResponse updateDeptManager(String deptNo, Integer empNo, UpdateDeptManagerRequest request){
+        validationService.validate(request);
         Department department = departmentRepository.findById(deptNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
 
