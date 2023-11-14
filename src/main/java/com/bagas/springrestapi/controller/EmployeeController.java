@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -21,7 +22,7 @@ public class EmployeeController {
             path = "/employees",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<String> registerEmployee(@Valid @RequestBody RegisterEmployeeRequest request){
+    public WebResponse<String> registerEmployee(@RequestBody RegisterEmployeeRequest request) throws ParseException {
         employeeService.registerEmployee(request);
         return WebResponse.<String>builder()
                 .data("OK")
@@ -34,7 +35,7 @@ public class EmployeeController {
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public WebResponse<EmployeeResponse> updateEmployee(@PathVariable Integer empNo,
-                                                        @Valid @RequestBody UpdateEmployeeRequest request){
+                                                        @RequestBody UpdateEmployeeRequest request) throws ParseException {
         EmployeeResponse employeeResponse = employeeService.updateEmployee(empNo,request);
         return WebResponse.<EmployeeResponse>builder()
                 .data(employeeResponse)
@@ -97,5 +98,16 @@ public class EmployeeController {
                         .build())
                 .build();
     }
+
+//    @GetMapping(
+//            path = "/employees/{empNo}/salary",
+//            produces = MediaType.APPLICATION_JSON_VALUE
+//    )
+//    public WebResponse<EmployeeSalaryResponse> getEmployeeSalaryByEmpNo(@PathVariable Integer empNo){
+//        EmployeeSalaryResponse employeeSalaryResponse = employeeService.getEmployeeSalaryByEmpNo(empNo);
+//        return WebResponse.<EmployeeSalaryResponse>builder()
+//                .data(employeeSalaryResponse)
+//                .build();
+//    }
 
 }

@@ -16,9 +16,9 @@ import java.util.Date;
 @Builder
 public class UpdateEmployeeRequest {
 
-    @Past
     @Temporal(TemporalType.DATE)
-    private Date birthDate;
+    @Pattern(regexp = "^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$",message = "format must yyyy-MM-dd")
+    private String birthDate;
 
     @Size(max = 14,message = "length must be between 0 and 14")
     private String firstName;
@@ -31,7 +31,8 @@ public class UpdateEmployeeRequest {
     private String gender;
 
     @Temporal(TemporalType.DATE)
-    private Date hireDate;
+    @Pattern(regexp = "^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$",message = "format must yyyy-MM-dd")
+    private String hireDate;
 
 
 }

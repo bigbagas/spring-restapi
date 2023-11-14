@@ -42,4 +42,10 @@ public class ErrorController {
                 .body(WebResponse.<String>builder().errors(errors.toString()).build());
 
     }
+
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<WebResponse<String>> xception(Exception exception) {
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                .body(WebResponse.<String>builder().errors(exception.getMessage()).build());
+//    }
 }

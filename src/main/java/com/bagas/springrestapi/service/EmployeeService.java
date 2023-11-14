@@ -3,11 +3,9 @@ package com.bagas.springrestapi.service;
 import com.bagas.springrestapi.entity.DeptEmp;
 import com.bagas.springrestapi.entity.DeptManager;
 import com.bagas.springrestapi.entity.Employee;
+import com.bagas.springrestapi.entity.Salary;
 import com.bagas.springrestapi.enums.Gender;
-import com.bagas.springrestapi.model.DeptEmpResponse;
-import com.bagas.springrestapi.model.EmployeeResponse;
-import com.bagas.springrestapi.model.RegisterEmployeeRequest;
-import com.bagas.springrestapi.model.UpdateEmployeeRequest;
+import com.bagas.springrestapi.model.*;
 import com.bagas.springrestapi.repository.DeptEmpRepository;
 import com.bagas.springrestapi.repository.DeptManagerRepository;
 import com.bagas.springrestapi.repository.EmployeeRepository;
@@ -20,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -41,15 +41,16 @@ public class EmployeeService {
     private DeptManagerRepository deptManagerRepository;
 
     @Transactional
-    public void registerEmployee(RegisterEmployeeRequest request){
+    public void registerEmployee(RegisterEmployeeRequest request) throws ParseException {
         validationService.validate(request);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         Optional<Employee> employeeCheck = employeeRepository
                 .findByBirthDateAndAndFirstNameAndLastNameAndHireDateAndGender(
-                        request.getBirthDate(),
+                        sdf.parse(request.getBirthDate()),
                         request.getFirstName(),
                         request.getLastName(),
-                        request.getHireDate(),
+                        sdf.parse(request.getHireDate()),
                         request.getGender()
                 );
         if (employeeCheck.isPresent()){
@@ -57,7 +58,7 @@ public class EmployeeService {
         }
 
         Employee employee = new Employee();
-        employee.setBirthDate(request.getBirthDate());
+        employee.setBirthDate(sdf.parse(request.getBirthDate()));
         employee.setFirstName(request.getFirstName());
         employee.setLastName(request.getLastName());
         if (request.getGender().equalsIgnoreCase("M")){
@@ -65,19 +66,20 @@ public class EmployeeService {
         }else if (request.getGender().equalsIgnoreCase("F")){
             employee.setGender(Gender.F.name());
         }
-        employee.setHireDate(request.getHireDate());
+        employee.setHireDate(sdf.parse(request.getHireDate()));
         employeeRepository.save(employee);
     }
 
     @Transactional
-    public EmployeeResponse updateEmployee(Integer empNo,UpdateEmployeeRequest request){
+    public EmployeeResponse updateEmployee(Integer empNo,UpdateEmployeeRequest request) throws ParseException {
         validationService.validate(request);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         Employee employee = employeeRepository.findById(empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee is not found"));
 
         if (Objects.nonNull(request.getBirthDate())){
-            employee.setBirthDate(request.getBirthDate());
+            employee.setBirthDate(sdf.parse((request.getBirthDate())));
         }
 
         if (Objects.nonNull(request.getFirstName())){
@@ -97,7 +99,7 @@ public class EmployeeService {
         }
 
         if (Objects.nonNull(request.getHireDate())){
-            employee.setHireDate(request.getHireDate());
+            employee.setHireDate(sdf.parse(request.getHireDate()));
         }
 
         employeeRepository.save(employee);
@@ -120,8 +122,12 @@ public class EmployeeService {
         Employee employeeByEmpNo = employeeRepository.findById(empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee is not found"));
 
+        System.out.println(employeeByEmpNo.getSalary());
+
         return toEmployeeResponse(employeeByEmpNo);
     }
+
+
 
     @Transactional
     public void deleteEmployee(Integer empNo){
@@ -175,4 +181,39 @@ public class EmployeeService {
                 .map(this::toEmployeeResponse).toList();
         return new PageImpl<>(employeeResponseList,pageable,employees.getTotalElements());
     }
+
+//    @Transactional(readOnly = true)
+//    public EmployeeSalaryResponse getEmployeeSalaryByEmpNo(Integer empNo){
+//        Employee employeeByEmpNo = employeeRepository.findById(empNo)
+//                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee is not found"));
+//
+//        System.out.println(employeeByEmpNo.getSalary());
+//
+//        return toEmployeeSalaryResponse(employeeByEmpNo);
+//    }
+
+//    private EmployeeSalaryResponse toEmployeeSalaryResponse(Employee employee){
+//
+//        Salary salary = employee.getSalary();
+//
+//        SalaryResponse salaryResponse = new SalaryResponse();
+//        if (salary.isPresent()){
+//            salaryResponse.setEmpNo(employee.getSalary().getEmpNo());
+//            salaryResponse.setSalary(employee.getSalary().getSalary());
+//            salaryResponse.setFromDate(employee.getSalary().getFromDate());
+//            salaryResponse.setToDate(employee.getSalary().getToDate());
+//
+//        }
+//
+//        return EmployeeSalaryResponse.builder()
+//                .empNo(employee.getEmpNo())
+//                .birthDate(employee.getBirthDate())
+//                .firstName(employee.getFirstName())
+//                .lastName(employee.getLastName())
+//                .gender(employee.getGender())
+//                .hireDate(employee.getHireDate())
+//                .salary(salary)
+//                .build();
+//    }
+
 }

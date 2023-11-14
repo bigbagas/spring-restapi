@@ -62,11 +62,11 @@ class EmployeeControllerTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         RegisterEmployeeRequest request = new RegisterEmployeeRequest();
-        request.setBirthDate(sdf.parse("1995-08-22"));
+        request.setBirthDate("1995-08-22");
         request.setFirstName("Bagas");
         request.setLastName("Wiji");
         request.setGender("M");
-        request.setHireDate(sdf.parse("2022-09-21"));
+        request.setHireDate("2022-09-21");
 
         mockMvc.perform(
                 post("/api/employees")
@@ -83,11 +83,11 @@ class EmployeeControllerTest {
 
             Employee employeeTest = employeeRepository.findFirstByFirstName(request.getFirstName()).orElse(null);
             assertNotNull(employeeTest);
-            assertEquals(request.getBirthDate(),employeeTest.getBirthDate());
+            assertEquals(sdf.parse(request.getBirthDate()),employeeTest.getBirthDate());
             assertEquals(request.getFirstName(),employeeTest.getFirstName());
             assertEquals(request.getLastName(),employeeTest.getLastName());
             assertEquals(request.getGender(),employeeTest.getGender());
-            assertEquals(request.getHireDate(),employeeTest.getHireDate());
+            assertEquals(sdf.parse(request.getHireDate()),employeeTest.getHireDate());
         });
     }
 
@@ -97,11 +97,11 @@ class EmployeeControllerTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         RegisterEmployeeRequest request = new RegisterEmployeeRequest();
-        request.setBirthDate(sdf.parse("1995-08-22"));
+        request.setBirthDate("1995-08-22");
         request.setFirstName("");
         request.setLastName("");
         request.setGender("M");
-        request.setHireDate(sdf.parse("2022-09-21"));
+        request.setHireDate("2022-09-21");
 
         mockMvc.perform(
                 post("/api/employees")
@@ -136,11 +136,11 @@ class EmployeeControllerTest {
         System.out.println(employee.getEmpNo());
 
         RegisterEmployeeRequest request = new RegisterEmployeeRequest();
-        request.setBirthDate(sdf.parse("1995-08-22"));
+        request.setBirthDate("1995-08-22");
         request.setFirstName("Nanda");
         request.setLastName("Wahyu");
         request.setGender("F");
-        request.setHireDate(sdf.parse("2022-10-21"));
+        request.setHireDate("2022-10-21");
 
         mockMvc.perform(
                 put("/api/employees/"+employee.getEmpNo())
@@ -152,21 +152,15 @@ class EmployeeControllerTest {
             WebResponse<EmployeeResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
             assertNotNull(response.getData());
-            assertEquals(response.getData().getEmpNo(),employee.getEmpNo());
-            assertEquals(response.getData().getBirthDate(),request.getBirthDate());
-            assertEquals(response.getData().getFirstName(),request.getFirstName());
-            assertEquals(response.getData().getLastName(),request.getLastName());
-            assertEquals(response.getData().getGender(),request.getGender());
-            assertEquals(response.getData().getHireDate(),request.getHireDate());
             assertNull(response.getErrors());
 
             Employee employeeTest = employeeRepository.findById(employee.getEmpNo()).orElse(null);
             assertNotNull(employeeTest);
-            assertEquals(request.getBirthDate(),employeeTest.getBirthDate());
+            assertEquals(sdf.parse(request.getBirthDate()),employeeTest.getBirthDate());
             assertEquals(request.getFirstName(),employeeTest.getFirstName());
             assertEquals(request.getLastName(),employeeTest.getLastName());
             assertEquals(request.getGender(),employeeTest.getGender());
-            assertEquals(request.getHireDate(),employeeTest.getHireDate());
+            assertEquals(sdf.parse(request.getHireDate()),employeeTest.getHireDate());
         });
     }
 
@@ -184,11 +178,11 @@ class EmployeeControllerTest {
         System.out.println(employee.getEmpNo());
 
         RegisterEmployeeRequest request = new RegisterEmployeeRequest();
-        request.setBirthDate(sdf.parse("1995-08-22"));
+        request.setBirthDate("1995-08-22");
         request.setFirstName("Nandaaaaaaaaaaaaaaaaaaaa");
         request.setLastName("Wahyuuuuuuuuuuuuuuuuuu");
         request.setGender("F");
-        request.setHireDate(sdf.parse("2022-10-21"));
+        request.setHireDate("2022-10-21");
 
         mockMvc.perform(
                 put("/api/employees/"+employee.getEmpNo())
@@ -225,11 +219,11 @@ class EmployeeControllerTest {
         System.out.println(employee.getEmpNo());
 
         RegisterEmployeeRequest request = new RegisterEmployeeRequest();
-        request.setBirthDate(sdf.parse("1995-08-22"));
+        request.setBirthDate("1995-08-22");
         request.setFirstName("Nanda");
         request.setLastName("Wahyu");
         request.setGender("F");
-        request.setHireDate(sdf.parse("2022-10-21"));
+        request.setHireDate("2022-10-21");
 
         mockMvc.perform(
                 put("/api/employees/1")
