@@ -1,15 +1,14 @@
 package com.bagas.springrestapi.controller;
 
-import com.bagas.springrestapi.model.RegisterTitleRequest;
-import com.bagas.springrestapi.model.TitleResponse;
-import com.bagas.springrestapi.model.UpdateTitleRequest;
-import com.bagas.springrestapi.model.WebResponse;
+import com.bagas.springrestapi.model.*;
 import com.bagas.springrestapi.service.TitleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api")
@@ -64,4 +63,45 @@ public class TitleController {
                 .data("OK")
                 .build();
     }
+
+    @GetMapping(
+            path = "/titles",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<List<TitleResponse>> getAllTitle(@RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
+                                                        @RequestParam(value = "size",required = false,defaultValue = "10")Integer size){
+
+        Page<TitleResponse> titleResponses = titleService.getAllTitle(page, size);
+        return WebResponse.<List<TitleResponse>>builder()
+                .data(titleResponses.getContent())
+                .paging(PagingResponse.builder()
+                        .currentPage(titleResponses.getNumber())
+                        .totalPage(titleResponses.getTotalPages())
+                        .size((int) titleResponses.getTotalElements()).build())
+                .build();
+
+    }
+
+    @GetMapping(
+            path = "/titles/search",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<List<TitleResponse>> searchTitle(@RequestParam(value = "keyword",required = false)String keyword,
+                                                        @RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
+                                                        @RequestParam(value = "size",required = false,defaultValue = "10")Integer size){
+
+        Page<TitleResponse> titleResponses = titleService.searchTitle(keyword,page, size);
+        return WebResponse.<List<TitleResponse>>builder()
+                .data(titleResponses.getContent())
+                .paging(PagingResponse.builder()
+                        .currentPage(titleResponses.getNumber())
+                        .totalPage(titleResponses.getTotalPages())
+                        .size((int) titleResponses.getTotalElements()).build())
+                .build();
+
+    }
+
+
+
+
 }

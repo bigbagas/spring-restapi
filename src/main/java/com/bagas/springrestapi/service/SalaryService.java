@@ -140,9 +140,11 @@ public class SalaryService {
     public Page<SalaryResponse> searchSalary(Integer keyword, Integer page, Integer size ){
         Pageable pageable = PageRequest.of(page,size,Sort.by("emp_no").ascending());
 
-        Page<Salary> salaries = salaryRepository.allSalaryWithPageable(pageable);
+        Page<Salary> salaries;
         if (Objects.nonNull(keyword)){
             salaries = salaryRepository.searchSalary(keyword,pageable);
+        }else {
+            salaries = salaryRepository.allSalaryWithPageable(pageable);
         }
         List<SalaryResponse> salaryResponseList = salaries.getContent().stream()
                 .map(this::toSalaryResponse).toList();

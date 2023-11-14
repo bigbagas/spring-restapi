@@ -8,6 +8,7 @@ import com.bagas.springrestapi.model.UpdateTitleRequest;
 import com.bagas.springrestapi.repository.EmployeeRepository;
 import com.bagas.springrestapi.repository.TitleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -113,4 +115,31 @@ public class TitleService {
 
         titleRepository.deleteTitle(empNo);
     }
+
+    @Transactional(readOnly = true)
+    public Page<TitleResponse> getAllTitle(Integer page, Integer size){
+        Pageable pageable = PageRequest.of(page, size, Sort.by("emp_no").ascending());
+
+        Page<Title> titles = titleRepository.allSalaryWithPageable(pageable);
+        List<TitleResponse> titleResponseList = titles.getContent().stream()
+                .map(this::toTitleResponse).toList();
+        return new PageImpl<>(titleResponseList,pageable,titles.getTotalElements());
+
+    }
+
+    @Transactional(readOnly = true)
+    public Page<TitleResponse> searchTitle (String keyword, Integer page, Integer size){
+        Pageable pageable = PageRequest.of(page,size,Sort.by("emp_no").ascending());
+        Page<Title> titles;
+        if (Objects.nonNull(keyword)){
+            titles = titleRepository.searchTitle(keyword,pageable);
+        }else {
+            titles = titleRepository.allSalaryWithPageable(pageable);
+        }
+
+        List<TitleResponse> titleResponseList = titles.getContent().stream()
+                .map(this::toTitleResponse).toList();
+        return new PageImpl<>(titleResponseList,pageable,titles.getTotalElements());
+    }
+
 }

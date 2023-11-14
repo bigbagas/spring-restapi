@@ -1,6 +1,8 @@
 package com.bagas.springrestapi.repository;
 
 import com.bagas.springrestapi.entity.Title;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,7 +14,6 @@ import java.util.Optional;
 @Repository
 public interface TitleRepository extends JpaRepository<Title, Integer> {
 
-    @Modifying
     @Query(
             value = "select insert_title(:empNo, :fromDate, :title,:toDate)",
             nativeQuery = true
@@ -31,12 +32,27 @@ public interface TitleRepository extends JpaRepository<Title, Integer> {
     )
     void updateTitle(Integer empNo, Date fromDate, String title, Date toDate);
 
-    @Modifying
     @Query(
             value = "select delete_title(:empNo)",
             nativeQuery = true
     )
     void deleteTitle(Integer empNo);
+
+    @Query(
+            value = "select * from titles order by titles.emp_no",
+            countQuery = "select count(*) from titles",
+            nativeQuery = true
+    )
+    Page<Title> allSalaryWithPageable(Pageable pageable);
+
+    @Query(
+            value = "select * from titles where title like %:title% order by titles.emp_no",
+            countQuery = "select count(*) from titles",
+            nativeQuery = true
+    )
+    Page<Title> searchTitle(String title, Pageable pageable);
+
+
 
 
 }
