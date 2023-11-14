@@ -123,6 +123,156 @@ class EmployeeControllerTest {
     }
 
     @Test
+    void registerEmployeeDuplicate() throws Exception {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        Employee employee = new Employee();
+        employee.setEmpNo(1);
+        employee.setBirthDate(sdf.parse("1995-08-22"));
+        employee.setFirstName("Bagas");
+        employee.setLastName("Bagas");
+        employee.setGender("M");
+        employee.setHireDate(sdf.parse("2022-09-21"));
+        employeeRepository.save(employee);
+
+        RegisterEmployeeRequest request = new RegisterEmployeeRequest();
+        request.setBirthDate("1995-08-22");
+        request.setFirstName("Bagas");
+        request.setLastName("Bagas");
+        request.setGender("M");
+        request.setHireDate("2022-09-21");
+
+        mockMvc.perform(
+                post("/api/employees")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+        ).andExpectAll(status().isBadRequest()
+        ).andDo(result -> {
+            WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getErrors());
+            assertNull(response.getData());
+
+            Employee employeeTest = employeeRepository.findFirstByFirstName(request.getFirstName()).orElse(null);
+            assertNotNull(employeeTest);
+
+        });
+
+    }
+
+    @Test
+    void registerEmployeeWrongDateFormat() throws Exception {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        RegisterEmployeeRequest request = new RegisterEmployeeRequest();
+        request.setBirthDate("1995/08/22");
+        request.setFirstName("Bagas");
+        request.setLastName("Bagas");
+        request.setGender("M");
+        request.setHireDate("2022/09/21");
+
+        mockMvc.perform(
+                post("/api/employees")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+        ).andExpectAll(status().isBadRequest()
+        ).andDo(result -> {
+            WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getErrors());
+            assertNull(response.getData());
+
+            Employee employeeTest = employeeRepository.findFirstByFirstName(request.getFirstName()).orElse(null);
+            assertNull(employeeTest);
+
+        });
+
+        RegisterEmployeeRequest request2 = new RegisterEmployeeRequest();
+        request2.setBirthDate("22-09-1992");
+        request2.setFirstName("Bagas");
+        request2.setLastName("Bagas");
+        request2.setGender("M");
+        request2.setHireDate("2022-09-21");
+
+        mockMvc.perform(
+                post("/api/employees")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request2))
+        ).andExpectAll(status().isBadRequest()
+        ).andDo(result -> {
+            WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getErrors());
+            assertNull(response.getData());
+
+            Employee employeeTest = employeeRepository.findFirstByFirstName(request.getFirstName()).orElse(null);
+            assertNull(employeeTest);
+
+        });
+
+    }
+
+    @Test
+    void registerEmployeeWrongGender() throws Exception {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        RegisterEmployeeRequest request = new RegisterEmployeeRequest();
+        request.setBirthDate("1995-08-22");
+        request.setFirstName("Bagas");
+        request.setLastName("Bagas");
+        request.setGender("Male");
+        request.setHireDate("2022-09-21");
+
+        mockMvc.perform(
+                post("/api/employees")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+        ).andExpectAll(status().isBadRequest()
+        ).andDo(result -> {
+            WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getErrors());
+            assertNull(response.getData());
+
+            Employee employeeTest = employeeRepository.findFirstByFirstName(request.getFirstName()).orElse(null);
+            assertNull(employeeTest);
+
+        });
+
+        RegisterEmployeeRequest request2 = new RegisterEmployeeRequest();
+        request2.setBirthDate("2020-09-21");
+        request2.setFirstName("Bagas");
+        request2.setLastName("Bagas");
+        request2.setGender("L");
+        request2.setHireDate("2022-09-21");
+
+        mockMvc.perform(
+                post("/api/employees")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request2))
+        ).andExpectAll(status().isBadRequest()
+        ).andDo(result -> {
+            WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getErrors());
+            assertNull(response.getData());
+
+            Employee employeeTest = employeeRepository.findFirstByFirstName(request.getFirstName()).orElse(null);
+            assertNull(employeeTest);
+
+        });
+
+    }
+
+    @Test
     void updateEmployeeSuccess() throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
