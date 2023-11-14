@@ -55,9 +55,8 @@ public class SalaryService {
     @Transactional(readOnly = true)
     public SalaryResponse getSalaryByEmpNo(Integer empNo){
 
-//        Optional<Salary> salary = Optional.ofNullable(salaryRepository.salaryByEmpNo(empNo)
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee salary is not found")));
-
+      Employee employee = employeeRepository.employeeByEmpNo(empNo)
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee is not found"));
         Salary salary = salaryRepository.salaryByEmpNo(empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee Salary is not found"));
 
