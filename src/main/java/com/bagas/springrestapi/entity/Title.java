@@ -28,4 +28,9 @@ public class Title {
     @Temporal(TemporalType.DATE)
     private Date toDate;
 
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "emp_no",referencedColumnName = "emp_no")
+    private Employee employee;
+
 }
