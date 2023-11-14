@@ -17,12 +17,16 @@ import java.util.Date;
 public class Salary {
 
     @Id
+    @Column(length = 11)
     private Integer empNo;
 
+    @Column(length = 11)
     private Integer salary;
 
+    @Temporal(TemporalType.DATE)
     private Date fromDate;
 
+    @Temporal(TemporalType.DATE)
     private Date toDate;
 
     @OneToOne
