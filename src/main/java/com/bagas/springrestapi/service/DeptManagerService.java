@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,8 +38,9 @@ public class DeptManagerService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    public void registerDeptManager(RegisterDeptManagerRequest request){
+    public void registerDeptManager(RegisterDeptManagerRequest request) throws ParseException {
         validationService.validate(request);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         Department department = departmentRepository.findById(request.getDeptNo())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
@@ -56,8 +59,8 @@ public class DeptManagerService {
         }
 
         DeptManager deptManager = new DeptManager();
-        deptManager.setFromDate(request.getFromDate());
-        deptManager.setToDate(request.getToDate());
+        deptManager.setFromDate(sdf.parse(request.getFromDate()));
+        deptManager.setToDate(sdf.parse(request.getToDate()));
         deptManager.setDepartment(department);
         deptManager.setEmployee(employee);
         deptManagerRepository.save(deptManager);
@@ -132,8 +135,10 @@ public class DeptManagerService {
 //    }
 
     @Transactional
-    public DeptManagerResponse updateDeptManager(String deptNo, Integer empNo, UpdateDeptManagerRequest request){
+    public DeptManagerResponse updateDeptManager(String deptNo, Integer empNo, UpdateDeptManagerRequest request) throws ParseException {
         validationService.validate(request);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
         Department department = departmentRepository.findById(deptNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
 
@@ -144,11 +149,11 @@ public class DeptManagerService {
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Department or Employee is not found"));
 
         if (Objects.nonNull(request.getFromDate())){
-            deptManager.setFromDate(request.getFromDate());
+            deptManager.setFromDate(sdf.parse(request.getFromDate()));
         }
 
         if (Objects.nonNull(request.getToDate())){
-            deptManager.setToDate(request.getToDate());
+            deptManager.setToDate(sdf.parse(request.getToDate()));
         }
 
         if (Objects.nonNull(request.getDeptNo())){

@@ -2,6 +2,7 @@ package com.bagas.springrestapi.model;
 
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,11 +17,13 @@ import java.util.Date;
 @Builder
 public class UpdateDeptManagerRequest {
 
+    @Pattern(regexp = "^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$",message = "date format must yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
-    private Date fromDate;
+    private String fromDate;
 
+    @Pattern(regexp = "^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$",message = "date format must yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
-    private Date toDate;
+    private String toDate;
 
     @Size(max = 4)
     private String deptNo;

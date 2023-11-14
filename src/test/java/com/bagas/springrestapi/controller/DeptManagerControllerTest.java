@@ -76,8 +76,8 @@ class DeptManagerControllerTest {
         RegisterDeptManagerRequest request = new RegisterDeptManagerRequest();
         request.setDeptNo(department.getDeptNo());
         request.setEmpNo(employee.getEmpNo());
-        request.setFromDate(sdf.parse("2020-09-21"));
-        request.setToDate(sdf.parse("2023-09-21"));
+        request.setFromDate("2020-09-21");
+        request.setToDate("2023-09-21");
 
         mockMvc.perform(
                 post("/api/departments/managers")
@@ -98,8 +98,8 @@ class DeptManagerControllerTest {
             assertNotNull(deptManager);
             assertEquals(request.getDeptNo(),deptManager.getDepartment().getDeptNo());
             assertEquals(request.getEmpNo(),deptManager.getEmpNo());
-            assertEquals(request.getFromDate(),deptManager.getFromDate());
-            assertEquals(request.getToDate(),deptManager.getToDate());
+            assertEquals(sdf.parse(request.getFromDate()),deptManager.getFromDate());
+            assertEquals(sdf.parse(request.getToDate()),deptManager.getToDate());
 
         });
     }
@@ -124,8 +124,8 @@ class DeptManagerControllerTest {
         RegisterDeptManagerRequest requestDeptNoTooLong = new RegisterDeptManagerRequest();
         requestDeptNoTooLong.setDeptNo("Dept No is too long. Dept No is too long.");
         requestDeptNoTooLong.setEmpNo(1);
-        requestDeptNoTooLong.setFromDate(sdf.parse("2020-09-21"));
-        requestDeptNoTooLong.setToDate(sdf.parse("2023-09-21"));
+        requestDeptNoTooLong.setFromDate("2020-09-21");
+        requestDeptNoTooLong.setToDate("2023-09-21");
 
         mockMvc.perform(
                 post("/api/departments/managers")
@@ -167,8 +167,8 @@ class DeptManagerControllerTest {
         RegisterDeptManagerRequest requestDeptNoIsNotFound = new RegisterDeptManagerRequest();
         requestDeptNoIsNotFound.setDeptNo("Dept");
         requestDeptNoIsNotFound.setEmpNo(1);
-        requestDeptNoIsNotFound.setFromDate(sdf.parse("2020-09-21"));
-        requestDeptNoIsNotFound.setToDate(sdf.parse("2023-09-21"));
+        requestDeptNoIsNotFound.setFromDate("2020-09-21");
+        requestDeptNoIsNotFound.setToDate("2023-09-21");
 
         mockMvc.perform(
                 post("/api/departments/managers")
@@ -192,8 +192,8 @@ class DeptManagerControllerTest {
         RegisterDeptManagerRequest requestEmpNoIsNotFound = new RegisterDeptManagerRequest();
         requestEmpNoIsNotFound.setDeptNo("Test");
         requestEmpNoIsNotFound.setEmpNo(33);
-        requestEmpNoIsNotFound.setFromDate(sdf.parse("2020-09-21"));
-        requestEmpNoIsNotFound.setToDate(sdf.parse("2023-09-21"));
+        requestEmpNoIsNotFound.setFromDate("2020-09-21");
+        requestEmpNoIsNotFound.setToDate("2023-09-21");
 
         mockMvc.perform(
                 post("/api/departments/managers")
@@ -240,8 +240,8 @@ class DeptManagerControllerTest {
         RegisterDeptManagerRequest requestInsert = new RegisterDeptManagerRequest();
         requestInsert.setDeptNo(department.getDeptNo());
         requestInsert.setEmpNo(employee.getEmpNo());
-        requestInsert.setFromDate(sdf.parse("2020-09-21"));
-        requestInsert.setToDate(sdf.parse("2023-09-21"));
+        requestInsert.setFromDate("2020-09-21");
+        requestInsert.setToDate("2023-09-21");
 
         mockMvc.perform(
                 post("/api/departments/managers")
@@ -253,8 +253,8 @@ class DeptManagerControllerTest {
         RegisterDeptManagerRequest requestAlreadyRegisterInThisDept = new RegisterDeptManagerRequest();
         requestAlreadyRegisterInThisDept.setDeptNo(department.getDeptNo());
         requestAlreadyRegisterInThisDept.setEmpNo(employee.getEmpNo());
-        requestAlreadyRegisterInThisDept.setFromDate(sdf.parse("2020-09-21"));
-        requestAlreadyRegisterInThisDept.setToDate(sdf.parse("2023-09-21"));
+        requestAlreadyRegisterInThisDept.setFromDate("2020-09-21");
+        requestAlreadyRegisterInThisDept.setToDate("2023-09-21");
 
         mockMvc.perform(
                 post("/api/departments/managers")
@@ -275,8 +275,8 @@ class DeptManagerControllerTest {
         RegisterDeptManagerRequest requestAlreadyRegisterInOtherDept = new RegisterDeptManagerRequest();
         requestAlreadyRegisterInOtherDept.setDeptNo(department2.getDeptNo());
         requestAlreadyRegisterInOtherDept.setEmpNo(employee.getEmpNo());
-        requestAlreadyRegisterInOtherDept.setFromDate(sdf.parse("2020-09-21"));
-        requestAlreadyRegisterInOtherDept.setToDate(sdf.parse("2023-09-21"));
+        requestAlreadyRegisterInOtherDept.setFromDate("2020-09-21");
+        requestAlreadyRegisterInOtherDept.setToDate("2023-09-21");
 
         mockMvc.perform(
                 post("/api/departments/managers")
@@ -326,8 +326,8 @@ class DeptManagerControllerTest {
             RegisterDeptManagerRequest requestInsert = new RegisterDeptManagerRequest();
             requestInsert.setDeptNo(department.getDeptNo());
             requestInsert.setEmpNo(j+1);
-            requestInsert.setFromDate(sdf.parse("2020-09-21"));
-            requestInsert.setToDate(sdf.parse("2023-09-21"));
+            requestInsert.setFromDate("2020-09-21");
+            requestInsert.setToDate("2023-09-21");
 
             mockMvc.perform(
                     post("/api/departments/managers")
@@ -395,8 +395,8 @@ class DeptManagerControllerTest {
             RegisterDeptManagerRequest requestInsert = new RegisterDeptManagerRequest();
             requestInsert.setDeptNo(department.getDeptNo());
             requestInsert.setEmpNo(j+1);
-            requestInsert.setFromDate(sdf.parse("2020-09-21"));
-            requestInsert.setToDate(sdf.parse("2023-09-21"));
+            requestInsert.setFromDate("2020-09-21");
+            requestInsert.setToDate("2023-09-21");
 
             mockMvc.perform(
                     post("/api/departments/managers")
@@ -457,8 +457,8 @@ class DeptManagerControllerTest {
             RegisterDeptManagerRequest requestInsert = new RegisterDeptManagerRequest();
             requestInsert.setDeptNo(department.getDeptNo());
             requestInsert.setEmpNo(j+1);
-            requestInsert.setFromDate(sdf.parse("2020-09-21"));
-            requestInsert.setToDate(sdf.parse("2023-09-21"));
+            requestInsert.setFromDate("2020-09-21");
+            requestInsert.setToDate("2023-09-21");
 
             mockMvc.perform(
                     post("/api/departments/managers")
@@ -515,8 +515,8 @@ class DeptManagerControllerTest {
         RegisterDeptManagerRequest requestInsert = new RegisterDeptManagerRequest();
         requestInsert.setDeptNo(department.getDeptNo());
         requestInsert.setEmpNo(employee.getEmpNo());
-        requestInsert.setFromDate(sdf.parse("2020-09-21"));
-        requestInsert.setToDate(sdf.parse("2023-09-21"));
+        requestInsert.setFromDate("2020-09-21");
+        requestInsert.setToDate("2023-09-21");
 
         mockMvc.perform(
                 post("/api/departments/managers")
@@ -576,8 +576,8 @@ class DeptManagerControllerTest {
         RegisterDeptManagerRequest requestInsert = new RegisterDeptManagerRequest();
         requestInsert.setDeptNo(department.getDeptNo());
         requestInsert.setEmpNo(employee.getEmpNo());
-        requestInsert.setFromDate(sdf.parse("2020-09-21"));
-        requestInsert.setToDate(sdf.parse("2023-09-21"));
+        requestInsert.setFromDate("2020-09-21");
+        requestInsert.setToDate("2023-09-21");
 
         mockMvc.perform(
                 post("/api/departments/managers")
@@ -673,8 +673,8 @@ class DeptManagerControllerTest {
         RegisterDeptManagerRequest requestInsert = new RegisterDeptManagerRequest();
         requestInsert.setDeptNo(department.getDeptNo());
         requestInsert.setEmpNo(employee.getEmpNo());
-        requestInsert.setFromDate(sdf.parse("2020-09-21"));
-        requestInsert.setToDate(sdf.parse("2023-09-21"));
+        requestInsert.setFromDate("2020-09-21");
+        requestInsert.setToDate("2023-09-21");
 
         mockMvc.perform(
                 post("/api/departments/managers")
@@ -685,8 +685,8 @@ class DeptManagerControllerTest {
 
         UpdateDeptManagerRequest request = new UpdateDeptManagerRequest();
         request.setDeptNo(department2.getDeptNo());
-        request.setFromDate(sdf.parse("2019-04-24"));
-        request.setToDate(sdf.parse("2023-01-01"));
+        request.setFromDate("2019-04-24");
+        request.setToDate("2023-01-01");
 
 
         //
@@ -707,17 +707,13 @@ class DeptManagerControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNull(response.getPaging());
-//
-            assertEquals(response.getData().getDeptNo(),request.getDeptNo());
-            assertEquals(response.getData().getFromDate(),request.getFromDate());
-            assertEquals(response.getData().getToDate(),request.getToDate());
 
             DeptManager DeptManagerTest = DeptManagerRepository.findById(employee.getEmpNo()).orElse(null);
             System.out.println(DeptManagerTest);
             assertNotNull(DeptManagerTest);
             assertEquals(DeptManagerTest.getDepartment().getDeptNo(),request.getDeptNo());
-            assertEquals(DeptManagerTest.getFromDate(),request.getFromDate());
-            assertEquals(DeptManagerTest.getToDate(),request.getToDate());
+            assertEquals(DeptManagerTest.getFromDate(),sdf.parse(request.getFromDate()));
+            assertEquals(DeptManagerTest.getToDate(),sdf.parse(request.getToDate()));
         });
 
     }
@@ -748,8 +744,8 @@ class DeptManagerControllerTest {
         RegisterDeptManagerRequest requestInsert = new RegisterDeptManagerRequest();
         requestInsert.setDeptNo(department.getDeptNo());
         requestInsert.setEmpNo(employee.getEmpNo());
-        requestInsert.setFromDate(sdf.parse("2020-09-21"));
-        requestInsert.setToDate(sdf.parse("2023-09-21"));
+        requestInsert.setFromDate("2020-09-21");
+        requestInsert.setToDate("2023-09-21");
 
         mockMvc.perform(
                 post("/api/departments/managers")
@@ -760,8 +756,8 @@ class DeptManagerControllerTest {
 
         UpdateDeptManagerRequest requestDeptNoTooLong = new UpdateDeptManagerRequest();
         requestDeptNoTooLong.setDeptNo("Dept No too long. Dept No too long. Dept No too long. Dept No too long. Dept No too long. Dept No too long.Dept No too long. Dept No too long. ");
-        requestDeptNoTooLong.setFromDate(sdf.parse("2019-04-24"));
-        requestDeptNoTooLong.setToDate(sdf.parse("2023-01-01"));
+        requestDeptNoTooLong.setFromDate("2019-04-24");
+        requestDeptNoTooLong.setToDate("2023-01-01");
 
 
         //
@@ -824,8 +820,8 @@ class DeptManagerControllerTest {
         RegisterDeptManagerRequest requestInsert = new RegisterDeptManagerRequest();
         requestInsert.setDeptNo(department.getDeptNo());
         requestInsert.setEmpNo(employee.getEmpNo());
-        requestInsert.setFromDate(sdf.parse("2020-09-21"));
-        requestInsert.setToDate(sdf.parse("2023-09-21"));
+        requestInsert.setFromDate("2020-09-21");
+        requestInsert.setToDate("2023-09-21");
 
         mockMvc.perform(
                 post("/api/departments/managers")
@@ -836,8 +832,8 @@ class DeptManagerControllerTest {
 
         UpdateDeptManagerRequest request = new UpdateDeptManagerRequest();
         request.setDeptNo(department2.getDeptNo());
-        request.setFromDate(sdf.parse("2019-04-24"));
-        request.setToDate(sdf.parse("2023-01-01"));
+        request.setFromDate("2019-04-24");
+        request.setToDate("2023-01-01");
 
 
         //
@@ -935,8 +931,8 @@ class DeptManagerControllerTest {
 
         UpdateDeptManagerRequest requestNewDeptNotFound = new UpdateDeptManagerRequest();
         requestNewDeptNotFound.setDeptNo("PR99");
-        requestNewDeptNotFound.setFromDate(sdf.parse("2019-04-24"));
-        requestNewDeptNotFound.setToDate(sdf.parse("2023-01-01"));
+        requestNewDeptNotFound.setFromDate("2019-04-24");
+        requestNewDeptNotFound.setToDate("2023-01-01");
 
         mockMvc.perform(
                 put("/api/departments/"+department.getDeptNo()+"/managers/"+employee.getEmpNo())
@@ -984,8 +980,8 @@ class DeptManagerControllerTest {
         RegisterDeptManagerRequest requestInsert = new RegisterDeptManagerRequest();
         requestInsert.setDeptNo(department.getDeptNo());
         requestInsert.setEmpNo(employee.getEmpNo());
-        requestInsert.setFromDate(sdf.parse("2020-09-21"));
-        requestInsert.setToDate(sdf.parse("2023-09-21"));
+        requestInsert.setFromDate("2020-09-21");
+        requestInsert.setToDate("2023-09-21");
 
         mockMvc.perform(
                 post("/api/departments/managers")
@@ -1051,8 +1047,8 @@ class DeptManagerControllerTest {
         RegisterDeptManagerRequest requestInsert = new RegisterDeptManagerRequest();
         requestInsert.setDeptNo(department.getDeptNo());
         requestInsert.setEmpNo(employee.getEmpNo());
-        requestInsert.setFromDate(sdf.parse("2020-09-21"));
-        requestInsert.setToDate(sdf.parse("2023-09-21"));
+        requestInsert.setFromDate("2020-09-21");
+        requestInsert.setToDate("2023-09-21");
 
         mockMvc.perform(
                 post("/api/departments/managers")

@@ -18,7 +18,7 @@ import java.util.Date;
 public class RegisterEmployeeRequest {
 
     @NotBlank
-    @Pattern(regexp = "^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$",message = "format must yyyy-MM-dd")
+    @Pattern(regexp = "^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$",message = "date format must yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
     private String birthDate;
 
@@ -36,7 +36,7 @@ public class RegisterEmployeeRequest {
     private String gender;
 
     @NotBlank
-    @Pattern(regexp = "^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$",message = "format must yyyy-MM-dd")
+    @Pattern(regexp = "^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$",message = "date format must yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
     private String hireDate;
 }
