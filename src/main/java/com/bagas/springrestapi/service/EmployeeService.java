@@ -15,10 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class EmployeeService {
@@ -44,6 +41,7 @@ public class EmployeeService {
     @Transactional
     public void registerEmployee(RegisterEmployeeRequest request) throws ParseException {
         validationService.validate(request);
+        validationService.dateBirthValidation(request.getBirthDate(),request.getHireDate());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         Optional<Employee> employeeCheck = employeeRepository
@@ -79,9 +77,20 @@ public class EmployeeService {
         Employee employee = employeeRepository.findById(empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee is not found"));
 
+        String newBirthDate = sdf.format(employee.getBirthDate());
+        String newHireDate = sdf.format(employee.getHireDate());
+
         if (Objects.nonNull(request.getBirthDate())){
-            employee.setBirthDate(sdf.parse((request.getBirthDate())));
+            newBirthDate = request.getBirthDate();
+            employee.setBirthDate(sdf.parse(request.getBirthDate()));
         }
+
+        if (Objects.nonNull(request.getHireDate())){
+            newHireDate = request.getHireDate();
+            employee.setHireDate(sdf.parse(request.getHireDate()));
+        }
+
+        validationService.dateBirthValidation(newBirthDate,newHireDate);
 
         if (Objects.nonNull(request.getFirstName())){
             employee.setFirstName(request.getFirstName());
@@ -99,9 +108,6 @@ public class EmployeeService {
             }
         }
 
-        if (Objects.nonNull(request.getHireDate())){
-            employee.setHireDate(sdf.parse(request.getHireDate()));
-        }
 
         employeeRepository.save(employee);
         return toEmployeeResponse(employee);
