@@ -48,6 +48,9 @@ public class Employee {
     @OneToOne(mappedBy = "employee")
     private Salary salary;
 
+    @OneToOne(mappedBy = "employee")
+    private Title title;
+
 
 
 
