@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
+
 @RestController
 @RequestMapping(path = "/api")
 public class TitleController {
@@ -22,7 +24,7 @@ public class TitleController {
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<String> regiterTitle(@RequestBody RegisterTitleRequest request){
+    public WebResponse<String> regiterTitle(@RequestBody RegisterTitleRequest request) throws ParseException {
         titleService.registerTitle(request);
         return WebResponse.<String>builder()
                 .data("OK")

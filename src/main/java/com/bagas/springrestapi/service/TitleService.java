@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -24,8 +27,9 @@ public class TitleService {
     @Autowired
     private ValidationService validationService;
 
-    public void registerTitle(RegisterTitleRequest request){
+    public void registerTitle(RegisterTitleRequest request) throws ParseException {
         validationService.validate(request);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         Employee employee = employeeRepository.findById(request.getEmpNo())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee is not found"));
@@ -36,10 +40,6 @@ public class TitleService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Employee already have Title");
         }
 
-        titleRepository.insertIntoTitle(employee.getEmpNo(),request.getFromDate(),request.getTitle(),request.getToDate());
-
-
-
-
+        titleRepository.insertIntoTitle(employee.getEmpNo(),sdf.parse(request.getFromDate()),request.getTitle(),sdf.parse(request.getToDate()));
     }
 }
