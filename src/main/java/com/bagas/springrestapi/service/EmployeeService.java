@@ -1,14 +1,9 @@
 package com.bagas.springrestapi.service;
 
-import com.bagas.springrestapi.entity.DeptEmp;
-import com.bagas.springrestapi.entity.DeptManager;
-import com.bagas.springrestapi.entity.Employee;
-import com.bagas.springrestapi.entity.Salary;
+import com.bagas.springrestapi.entity.*;
 import com.bagas.springrestapi.enums.Gender;
 import com.bagas.springrestapi.model.*;
-import com.bagas.springrestapi.repository.DeptEmpRepository;
-import com.bagas.springrestapi.repository.DeptManagerRepository;
-import com.bagas.springrestapi.repository.EmployeeRepository;
+import com.bagas.springrestapi.repository.*;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -39,6 +34,12 @@ public class EmployeeService {
 
     @Autowired
     private DeptManagerRepository deptManagerRepository;
+
+    @Autowired
+    private SalaryRepository salaryRepository;
+
+    @Autowired
+    private TitleRepository titleRepository;
 
     @Transactional
     public void registerEmployee(RegisterEmployeeRequest request) throws ParseException {
@@ -142,6 +143,16 @@ public class EmployeeService {
         Optional<DeptManager> deptManager = deptManagerRepository.findById(empNo);
         if (deptManager.isPresent()){
             deptManagerRepository.delete(deptManager.get());
+        }
+
+        Optional<Salary> salary = salaryRepository.findById(empNo);
+        if (salary.isPresent()){
+            salaryRepository.delete(salary.get());
+        }
+
+        Optional<Title> title = titleRepository.findById(empNo);
+        if (title.isPresent()){
+            titleRepository.delete(title.get());
         }
 
         employeeRepository.delete(employee);
