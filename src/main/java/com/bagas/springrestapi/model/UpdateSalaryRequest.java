@@ -5,6 +5,7 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,11 +25,11 @@ public class UpdateSalaryRequest {
     @Min(1)
     private Integer salary;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Pattern(regexp = "^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$",message = "date format must yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
-    private Date fromDate;
+    private String fromDate;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Pattern(regexp = "^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$",message = "date format must yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
-    private Date toDate;
+    private String toDate;
 }

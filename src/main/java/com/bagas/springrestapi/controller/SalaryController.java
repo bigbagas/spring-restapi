@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -23,7 +24,7 @@ public class SalaryController {
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<String> registerSalary(@RequestBody RegisterSalaryRequest request){
+    public WebResponse<String> registerSalary(@RequestBody RegisterSalaryRequest request) throws ParseException {
         salaryService.registerSalary(request);
         return WebResponse.<String>builder()
                 .data("OK")
@@ -64,7 +65,7 @@ public class SalaryController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public WebResponse<SalaryResponse> updateSalary(@PathVariable("empNo")Integer empNo,
-                                                    @RequestBody UpdateSalaryRequest request){
+                                                    @RequestBody UpdateSalaryRequest request) throws ParseException {
         SalaryResponse salaryResponse = salaryService.updateSalary(empNo,request);
         return WebResponse.<SalaryResponse>builder()
                 .data(salaryResponse)

@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -32,8 +34,9 @@ public class SalaryService {
     private ValidationService validationService;
 
     @Transactional
-    public void registerSalary(RegisterSalaryRequest request){
+    public void registerSalary(RegisterSalaryRequest request) throws ParseException {
         validationService.validate(request);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         Employee employee = employeeRepository.employeeByEmpNo(request.getEmpNo())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee is not found"));
@@ -43,7 +46,7 @@ public class SalaryService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Employee already have Salary");
         }
 
-        salaryRepository.insertIntoSalary(request.getEmpNo(), request.getSalary(), request.getFromDate(),request.getToDate());
+        salaryRepository.insertIntoSalary(request.getEmpNo(), request.getSalary(), sdf.parse(request.getFromDate()),sdf.parse(request.getToDate()));
 
 
 
@@ -81,8 +84,9 @@ public class SalaryService {
     }
 
     @Transactional
-    public SalaryResponse updateSalary(Integer empNo, UpdateSalaryRequest request){
+    public SalaryResponse updateSalary(Integer empNo, UpdateSalaryRequest request) throws ParseException {
         validationService.validate(request);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         Employee employee = employeeRepository.employeeByEmpNo(empNo)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee is not found"));
@@ -91,8 +95,8 @@ public class SalaryService {
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee Salary is not found"));
 
         Integer newSalary = request.getSalary();
-        Date newFromDate = request.getFromDate();
-        Date newToDate = request.getToDate();
+        Date newFromDate = sdf.parse(request.getFromDate());
+        Date newToDate = sdf.parse(request.getToDate());
 
         if (Objects.isNull(request.getSalary())){
             newSalary = salary.getSalary();
