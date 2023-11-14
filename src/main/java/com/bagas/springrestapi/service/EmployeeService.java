@@ -119,6 +119,7 @@ public class EmployeeService {
     public EmployeeResponse getEmployeeByEmpNo(Integer empNo){
         Employee employeeByEmpNo = employeeRepository.findById(empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee is not found"));
+
         return toEmployeeResponse(employeeByEmpNo);
     }
 
