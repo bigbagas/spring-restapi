@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -21,7 +22,7 @@ public class DeptEmpController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<String> registerDeptEmp(@RequestBody RegisterDeptEmpRequest request){
+    public WebResponse<String> registerDeptEmp(@RequestBody RegisterDeptEmpRequest request) throws ParseException {
         deptEmpService.registerDeptEmp(request);
         return WebResponse.<String>builder()
                 .data("OK")
@@ -81,7 +82,7 @@ public class DeptEmpController {
     )
     public WebResponse<DeptEmpResponse> updateDeptEmp(@PathVariable("deptNo")String deptNo,
                                              @PathVariable("empNo")Integer empNo,
-                                             @RequestBody UpdateDeptEmpRequest request){
+                                             @RequestBody UpdateDeptEmpRequest request) throws ParseException {
         DeptEmpResponse deptEmpResponse = deptEmpService.updateDeptEmp(deptNo,empNo,request);
         return WebResponse.<DeptEmpResponse>builder()
                 .data(deptEmpResponse)

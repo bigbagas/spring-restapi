@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -16,10 +17,10 @@ import java.util.Date;
 @Builder
 public class RegisterEmployeeRequest {
 
-    @NotNull
-    @Past
+    @NotBlank
+    @Pattern(regexp = "^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$",message = "format must yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
-    private Date birthDate;
+    private String birthDate;
 
     @NotBlank
     @Size(max = 14, message = "length must be between 0 and 14")
@@ -34,7 +35,8 @@ public class RegisterEmployeeRequest {
     @Pattern(regexp = "[MFmf]+", message = "must either M or F")
     private String gender;
 
-    @NotNull
+    @NotBlank
+    @Pattern(regexp = "^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$",message = "format must yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
-    private Date hireDate;
+    private String hireDate;
 }
