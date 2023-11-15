@@ -82,6 +82,7 @@ class EmployeeControllerTest {
             assertNotNull(response.getData());
             assertEquals("OK",response.getData());
             assertNull(response.getErrors());
+            assertNotNull(response.getLinks());
 
             Employee employeeTest = employeeRepository.findFirstByFirstName(request.getFirstName()).orElse(null);
             assertNotNull(employeeTest);
@@ -390,6 +391,7 @@ class EmployeeControllerTest {
             });
             assertNotNull(response.getData());
             assertNull(response.getErrors());
+            assertNotNull(response.getLinks());
 
             Employee employeeTest = employeeRepository.findById(employee.getEmpNo()).orElse(null);
             assertNotNull(employeeTest);
@@ -634,6 +636,7 @@ class EmployeeControllerTest {
             });
             assertNotNull(response.getData());
             assertNull(response.getErrors());
+            assertNotNull(response.getLinks());
 
             Employee employeeTest = employeeRepository.findById(employee.getEmpNo()).orElse(null);
             assertNotNull(employeeTest);
@@ -695,6 +698,7 @@ class EmployeeControllerTest {
             assertNotNull(response.getData());
             assertEquals("OK",response.getData());
             assertNull(response.getErrors());
+            assertNotNull(response.getLinks());
 
             Employee employeeTest = employeeRepository.findById(employee.getEmpNo()).orElse(null);
             assertNull(employeeTest);
@@ -757,6 +761,7 @@ class EmployeeControllerTest {
             });
             assertNotNull(response.getData());
             assertNull(response.getErrors());
+            assertNotNull(response.getLinks());
             assertEquals(10,response.getData().size());
             assertEquals(10,response.getPaging().getTotalPage());
             assertEquals(0,response.getPaging().getCurrentPage());
@@ -801,6 +806,7 @@ class EmployeeControllerTest {
             });
             assertNotNull(response.getData());
             assertNull(response.getErrors());
+            assertNotNull(response.getLinks());
             assertEquals(10,response.getData().size());
             assertEquals(20,response.getPaging().getTotalPage());
             assertEquals(0,response.getPaging().getCurrentPage());
@@ -818,6 +824,7 @@ class EmployeeControllerTest {
             });
             assertNotNull(response.getData());
             assertNull(response.getErrors());
+            assertNotNull(response.getLinks());
             assertEquals(10,response.getData().size());
             assertEquals(20,response.getPaging().getTotalPage());
             assertEquals(0,response.getPaging().getCurrentPage());
@@ -835,6 +842,7 @@ class EmployeeControllerTest {
             });
             assertNotNull(response.getData());
             assertNull(response.getErrors());
+            assertNotNull(response.getLinks());
             assertEquals(10,response.getData().size());
             assertEquals(10,response.getPaging().getTotalPage());
             assertEquals(0,response.getPaging().getCurrentPage());
@@ -852,6 +860,7 @@ class EmployeeControllerTest {
             });
             assertNotNull(response.getData());
             assertNull(response.getErrors());
+            assertNotNull(response.getLinks());
             assertEquals(10,response.getData().size());
             assertEquals(10,response.getPaging().getTotalPage());
             assertEquals(3,response.getPaging().getCurrentPage());
@@ -869,6 +878,7 @@ class EmployeeControllerTest {
             });
             assertNotNull(response.getData());
             assertNull(response.getErrors());
+            assertNotNull(response.getLinks());
             assertEquals(20,response.getData().size());
             assertEquals(5,response.getPaging().getTotalPage());
             assertEquals(3,response.getPaging().getCurrentPage());
@@ -886,6 +896,7 @@ class EmployeeControllerTest {
             });
             assertNotNull(response.getData());
             assertNull(response.getErrors());
+            assertNotNull(response.getLinks());
             assertEquals(10,response.getData().size());
             assertEquals(10,response.getPaging().getTotalPage());
             assertEquals(0,response.getPaging().getCurrentPage());
@@ -904,6 +915,7 @@ class EmployeeControllerTest {
             });
             assertNotNull(response.getData());
             assertNull(response.getErrors());
+            assertNotNull(response.getLinks());
             assertEquals(10,response.getData().size());
             assertEquals(10,response.getPaging().getTotalPage());
             assertEquals(0,response.getPaging().getCurrentPage());
@@ -921,6 +933,7 @@ class EmployeeControllerTest {
             });
             assertNotNull(response.getData());
             assertNull(response.getErrors());
+            assertNotNull(response.getLinks());
             assertEquals(10,response.getData().size());
             assertEquals(10,response.getPaging().getTotalPage());
             assertEquals(0,response.getPaging().getCurrentPage());

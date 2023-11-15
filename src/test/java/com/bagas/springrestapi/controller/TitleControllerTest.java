@@ -79,6 +79,7 @@ class TitleControllerTest {
             assertNull(response.getErrors());
             assertNull(response.getPaging());
             assertEquals("OK",response.getData());
+            assertNotNull(response.getLinks());
 
             Title titleTest = titleRepository.findById(employee.getEmpNo()).orElse(null);
             assertNotNull(titleTest);
@@ -220,6 +221,7 @@ class TitleControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNull(response.getPaging());
+            assertNotNull(response.getLinks());
 
             Title titleTest = titleRepository.findById(employee.getEmpNo()).orElse(null);
             assertNotNull(titleTest);
@@ -444,6 +446,7 @@ class TitleControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNull(response.getPaging());
+            assertNotNull(response.getLinks());
 
             Title titleTest = titleRepository.findById(employee.getEmpNo()).orElse(null);
             assertNotNull(titleTest);
@@ -563,6 +566,7 @@ class TitleControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNotNull(response.getPaging());
+            assertNotNull(response.getLinks());
             assertEquals(10, response.getData().size());
             assertEquals(10,response.getPaging().getTotalPage());
             assertEquals(0,response.getPaging().getCurrentPage());
@@ -584,6 +588,7 @@ class TitleControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNotNull(response.getPaging());
+            assertNotNull(response.getLinks());
             assertEquals(10, response.getData().size());
             assertEquals(10,response.getPaging().getTotalPage());
             assertEquals(2,response.getPaging().getCurrentPage());
@@ -605,6 +610,7 @@ class TitleControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNotNull(response.getPaging());
+            assertNotNull(response.getLinks());
             assertEquals(20, response.getData().size());
             assertEquals(5,response.getPaging().getTotalPage());
             assertEquals(4,response.getPaging().getCurrentPage());
@@ -677,6 +683,7 @@ class TitleControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNotNull(response.getPaging());
+            assertNotNull(response.getLinks());
             assertEquals(10, response.getData().size());
             assertEquals(10,response.getPaging().getTotalPage());
             assertEquals(0,response.getPaging().getCurrentPage());
@@ -699,6 +706,7 @@ class TitleControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNotNull(response.getPaging());
+            assertNotNull(response.getLinks());
             assertEquals(9, response.getData().size());
             assertEquals(5,response.getPaging().getTotalPage());
             assertEquals(4,response.getPaging().getCurrentPage());
@@ -801,6 +809,7 @@ class TitleControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNull(response.getPaging());
+            assertNotNull(response.getLinks());
             assertEquals("OK",response.getData());
 
             Title titleTest = titleRepository.findById(employee.getEmpNo()).orElse(null);
