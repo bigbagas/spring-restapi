@@ -1,10 +1,11 @@
 ﻿# spring-restapi
 
- #How To Run
+ # How To Run
  1. Setting koneksi database PostgreSQL lewat application.properties dan sesuaikan port url, username, password sesuai setting masing - masing
  2. Pastikan ada database bernama postgres di PostgreSQL
  3. Run beberapa Query berikut untuk membuat beberapa procedure dan function yang dibutuhkan
-    # 3.1 Procedur Insert Salary
+# 3.1 Procedur Insert Salary
+
     CREATE OR REPLACE PROCEDURE public.insert_salary(IN no_emp integer, IN salary integer,
     IN from_date date, IN to_date date)
        LANGUAGE sql
@@ -13,7 +14,8 @@
       $procedure$
       ;
     
-    #3.2 Procedure Update Salary
+# 3.2 Procedure Update Salary
+    
     CREATE OR REPLACE PROCEDURE public.update_salary(IN new_salary integer,
     IN no_emp integer, IN new_from_date date, IN         new_to_date date)
      LANGUAGE sql
@@ -26,7 +28,8 @@
       $procedure$
     ;
 
-    #3.3 Procedure Delete Salary
+# 3.3 Procedure Delete Salary
+
     CREATE OR REPLACE PROCEDURE public.delete_salary(IN no_emp integer)
      LANGUAGE sql
       AS $procedure$
@@ -35,7 +38,8 @@
       $procedure$
       ;
     
-    #3.4 Function Insert Title
+# 3.4 Function Insert Title
+
     CREATE OR REPLACE FUNCTION public.insert_title(no_emp integer, from_date date,
      title character varying, to_date date)
    RETURNS void
@@ -48,7 +52,8 @@
   $function$
     ;
 
-    #3.5 Function Update Title
+# 3.5 Function Update Title
+
     CREATE OR REPLACE FUNCTION public.update_title(no_emp integer, new_from_date date,
      new_title character varying, new_to_date date)
     RETURNS void
@@ -64,7 +69,8 @@
   $function$
   ;
 
-#3.6 Function Delete Title
+# 3.6 Function Delete Title
+
 CREATE OR REPLACE FUNCTION public.delete_title(no_emp integer)
  RETURNS void
  LANGUAGE plpgsql
@@ -78,10 +84,10 @@ $function$
 ;
 
 
- 4. Jika sudah maka running aplikasi springboot dan aplikasi akan berjalan di url: localhost:8080
- 5. Aplikasi siap di uji dengan postman atau swagger ui
+4. Jika sudah maka running aplikasi springboot dan aplikasi akan berjalan di url: localhost:8080
+5. Aplikasi siap di uji dengan postman atau swagger ui
 
-#Unit Test
+# Unit Test
 1. Pastikan setting berikut spring.jpa.hibernate.ddl-auto= create-drop yang ada di application.properties TIDAK DI COMMENT
 2. Kemudian running skenario test yang ada
 3. Jika running skenario secara bersama - sama. Maka mungkin ada 1 atau 2 skenario yang gagal
@@ -90,6 +96,6 @@ $function$
 6. Kondisi skenario yang gagal saat run test bersama - sama, mungkin dikarenakan ada perubahan data yang disebabkan oleh skenario lain sehingga membuat ada skenario yang gagal
 7. Jika running skenario satu per satu maka test nya dapat berjalan dengan lancar
 
-#Documentation
+# Documentation
 1. Documentasi Colection Postman
 2. Lewat Swagger ui, yang dapat di akses di http://localhost:8080/swagger-ui/index.html
