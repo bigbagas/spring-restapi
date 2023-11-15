@@ -78,11 +78,13 @@ class DepartmentControllerTest {
             assertNotNull(response.getData());
             assertEquals("OK",response.getData());
             assertNull(response.getErrors());
+            assertNotNull(response.getLinks());
 
             Department departmentTest = departmentRepository.findById(request.getDeptNo()).orElse(null);
             assertNotNull(departmentTest);
             assertEquals(request.getDeptNo(),departmentTest.getDeptNo());
             assertEquals(request.getDeptName(),departmentTest.getDeptName());
+
         });
     }
 
@@ -206,6 +208,7 @@ class DepartmentControllerTest {
             });
             assertNotNull(response.getData());
             assertNull(response.getErrors());
+            assertNotNull(response.getLinks());
             System.out.println("error ="+response.getErrors());
 
             assertEquals("TEST",response.getData().getDeptNo());
@@ -272,6 +275,7 @@ class DepartmentControllerTest {
             assertNotNull(response.getData());
 
             assertNull(response.getErrors());
+            assertNotNull(response.getLinks());
 
             Department departmentTest = departmentRepository.findById("TEST").orElse(null);
             System.out.println(departmentTest.getDeptName());
@@ -361,6 +365,7 @@ class DepartmentControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertEquals("OK",response.getData());
+            assertNotNull(response.getLinks());
 
             Department departmentTest = departmentRepository.findById("TEST").orElse(null);
             assertNull(departmentTest);
@@ -415,6 +420,7 @@ class DepartmentControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNotNull(response.getPaging());
+            assertNotNull(response.getLinks());
             assertEquals(10,response.getData().size());
             assertEquals(10,response.getPaging().getTotalPage());
             assertEquals(0,response.getPaging().getCurrentPage());
@@ -482,6 +488,7 @@ class DepartmentControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNotNull(response.getPaging());
+            assertNotNull(response.getLinks());
             assertEquals(10,response.getData().size());
             assertEquals(20,response.getPaging().getTotalPage());
             assertEquals(0,response.getPaging().getCurrentPage());
@@ -500,6 +507,7 @@ class DepartmentControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNotNull(response.getPaging());
+            assertNotNull(response.getLinks());
             assertEquals(10,response.getData().size());
             assertEquals(10,response.getPaging().getTotalPage());
             assertEquals(0,response.getPaging().getCurrentPage());
@@ -518,6 +526,7 @@ class DepartmentControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNotNull(response.getPaging());
+            assertNotNull(response.getLinks());
             assertEquals(10,response.getData().size());
             assertEquals(10,response.getPaging().getTotalPage());
             assertEquals(0,response.getPaging().getCurrentPage());
@@ -535,6 +544,7 @@ class DepartmentControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNotNull(response.getPaging());
+            assertNotNull(response.getLinks());
             assertEquals(10,response.getData().size());
             assertEquals(20,response.getPaging().getTotalPage());
             assertEquals(0,response.getPaging().getCurrentPage());
@@ -552,6 +562,7 @@ class DepartmentControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNotNull(response.getPaging());
+            assertNotNull(response.getLinks());
             assertEquals(10,response.getData().size());
             assertEquals(20,response.getPaging().getTotalPage());
             assertEquals(6,response.getPaging().getCurrentPage());
@@ -569,6 +580,7 @@ class DepartmentControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNotNull(response.getPaging());
+            assertNotNull(response.getLinks());
             assertEquals(20,response.getData().size());
             assertEquals(5,response.getPaging().getTotalPage());
             assertEquals(3,response.getPaging().getCurrentPage());
