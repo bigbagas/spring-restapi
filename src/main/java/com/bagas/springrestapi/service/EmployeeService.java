@@ -1,5 +1,8 @@
 package com.bagas.springrestapi.service;
 
+import com.bagas.springrestapi.controller.EmployeeController;
+import com.bagas.springrestapi.controller.SalaryController;
+import com.bagas.springrestapi.controller.TitleController;
 import com.bagas.springrestapi.entity.*;
 import com.bagas.springrestapi.enums.Gender;
 import com.bagas.springrestapi.model.*;
@@ -8,6 +11,7 @@ import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +20,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class EmployeeService {
@@ -107,14 +114,13 @@ public class EmployeeService {
                 employee.setGender(Gender.F.name());
             }
         }
-
-
+        addLink(employee);
         employeeRepository.save(employee);
         return toEmployeeResponse(employee);
     }
 
     private EmployeeResponse toEmployeeResponse(Employee employee){
-        return EmployeeResponse.builder()
+        EmployeeResponse employeeResponse = EmployeeResponse.builder()
                 .empNo(employee.getEmpNo())
                 .birthDate(employee.getBirthDate())
                 .firstName(employee.getFirstName())
@@ -122,16 +128,34 @@ public class EmployeeService {
                 .gender(employee.getGender())
                 .hireDate(employee.getHireDate()
                 ).build();
+
+        employeeResponse.add(employee.getLinks());
+        return employeeResponse;
     }
 
     @Transactional(readOnly = true)
     public EmployeeResponse getEmployeeByEmpNo(Integer empNo){
         Employee employeeByEmpNo = employeeRepository.findById(empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee is not found"));
-
-        System.out.println(employeeByEmpNo.getSalary());
+        addLink(employeeByEmpNo);
 
         return toEmployeeResponse(employeeByEmpNo);
+    }
+
+    private void addLink(Employee employee){
+        Link link = linkTo(methodOn(EmployeeController.class).getEmployeeByEmpNo(employee.getEmpNo())).withSelfRel();
+        employee.add(link);
+
+        if (salaryRepository.findById(employee.getEmpNo()).isPresent()){
+            Link linkSalary = linkTo(methodOn(SalaryController.class).getSalaryByEmpNo(employee.getEmpNo())).withRel("salary");
+            employee.add(linkSalary);
+        }
+
+        if (titleRepository.findById(employee.getEmpNo()).isPresent()){
+            Link linkTitle = linkTo(methodOn(TitleController.class).getTitleByEmpNo(employee.getEmpNo())).withRel("title");
+            employee.add(linkTitle);
+        }
+
     }
 
 
@@ -168,6 +192,12 @@ public class EmployeeService {
     public Page<EmployeeResponse> allEmployee(Integer page, Integer size){
         Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
         Page<Employee> employees = employeeRepository.findAll(pageable);
+        List<Employee> employeeList = employees.getContent();
+        for (int i = 0; i < employeeList.size(); i++) {
+            Employee employee = employeeList.get(i);
+            addLink(employee);
+
+        }
         List<EmployeeResponse> employeeResponseList = employees.getContent().stream()
                 .map(this::toEmployeeResponse).toList();
         return new PageImpl<>(employeeResponseList,pageable,employees.getTotalElements());
@@ -194,43 +224,18 @@ public class EmployeeService {
 
         Pageable pageable = PageRequest.of(page,size,Sort.by("empNo").ascending());
         Page<Employee> employees = employeeRepository.findAll(specification,pageable);
+
+        List<Employee> employeeList = employees.getContent();
+        for (int i = 0; i < employeeList.size(); i++) {
+            Employee employee = employeeList.get(i);
+            addLink(employee);
+        }
+
         List<EmployeeResponse> employeeResponseList = employees.getContent().stream()
                 .map(this::toEmployeeResponse).toList();
         return new PageImpl<>(employeeResponseList,pageable,employees.getTotalElements());
     }
 
-//    @Transactional(readOnly = true)
-//    public EmployeeSalaryResponse getEmployeeSalaryByEmpNo(Integer empNo){
-//        Employee employeeByEmpNo = employeeRepository.findById(empNo)
-//                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee is not found"));
-//
-//        System.out.println(employeeByEmpNo.getSalary());
-//
-//        return toEmployeeSalaryResponse(employeeByEmpNo);
-//    }
 
-//    private EmployeeSalaryResponse toEmployeeSalaryResponse(Employee employee){
-//
-//        Salary salary = employee.getSalary();
-//
-//        SalaryResponse salaryResponse = new SalaryResponse();
-//        if (salary.isPresent()){
-//            salaryResponse.setEmpNo(employee.getSalary().getEmpNo());
-//            salaryResponse.setSalary(employee.getSalary().getSalary());
-//            salaryResponse.setFromDate(employee.getSalary().getFromDate());
-//            salaryResponse.setToDate(employee.getSalary().getToDate());
-//
-//        }
-//
-//        return EmployeeSalaryResponse.builder()
-//                .empNo(employee.getEmpNo())
-//                .birthDate(employee.getBirthDate())
-//                .firstName(employee.getFirstName())
-//                .lastName(employee.getLastName())
-//                .gender(employee.getGender())
-//                .hireDate(employee.getHireDate())
-//                .salary(salary)
-//                .build();
-//    }
 
 }
