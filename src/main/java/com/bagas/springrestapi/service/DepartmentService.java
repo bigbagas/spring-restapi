@@ -1,5 +1,8 @@
 package com.bagas.springrestapi.service;
 
+import com.bagas.springrestapi.controller.DepartmentController;
+import com.bagas.springrestapi.controller.DeptEmpController;
+import com.bagas.springrestapi.controller.DeptManagerController;
 import com.bagas.springrestapi.entity.Department;
 import com.bagas.springrestapi.entity.DeptEmp;
 import com.bagas.springrestapi.entity.DeptManager;
@@ -14,10 +17,15 @@ import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.Links;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,21 +74,48 @@ public class DepartmentService {
             department.setDeptName(request.getDeptName());
             departmentRepository.save(department);
         }
+        addLink(department);
         return toDepartmentResponse(department);
     }
 
+//    private DepartmentResponse toDepartmentResponse(Department department){
+//        return DepartmentResponse.builder()
+//                .deptNo(department.getDeptNo())
+//                .deptName(department.getDeptName())
+//                .build();
+//    }
+
     private DepartmentResponse toDepartmentResponse(Department department){
-        return DepartmentResponse.builder()
+        DepartmentResponse departmentResponse = DepartmentResponse.builder()
                 .deptNo(department.getDeptNo())
                 .deptName(department.getDeptName())
                 .build();
+        departmentResponse.add(department.getLinks());
+        return departmentResponse;
     }
 
     @Transactional(readOnly = true)
     public DepartmentResponse getDepartmentByDeptNo(String deptNo){
         Department department = departmentRepository.findById(deptNo)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Department is not found"));
+        addLink(department);
         return toDepartmentResponse(department);
+    }
+
+
+    private void addLink(Department department){
+        Link link = linkTo(DepartmentController.class).slash(department.getDeptNo()).withSelfRel();
+        department.add(link);
+
+        if (deptEmpRepository.findAllByDepartment_DeptNo(department.getDeptNo()).size()>0){
+            Link linkDeptEmp = linkTo(methodOn(DeptEmpController.class).getDeptEmpByDeptNo(department.getDeptNo(),0,10)).withRel("deptEmp");
+            department.add(linkDeptEmp);
+        }
+
+        if (deptManagerRepository.findAllByDepartment_DeptNo(department.getDeptNo()).size()>0){
+            Link linkDeptEmp = linkTo(methodOn(DeptManagerController.class).getDeptManagerByDeptNo(0,10,department.getDeptNo())).withRel("deptManager");
+            department.add(linkDeptEmp);
+        }
     }
 
     @Transactional
@@ -119,6 +154,11 @@ public class DepartmentService {
 
         Pageable pageable = PageRequest.of(page,size, Sort.by("deptNo").ascending());
         Page<Department> departments = departmentRepository.findAll(specification,pageable);
+        List<Department> departmentList = departments.getContent();
+        for (int i = 0; i < departmentList.size(); i++) {
+            Department department = departmentList.get(i);
+            addLink(department);
+        }
         List<DepartmentResponse> departmentResponseList = departments.stream()
                 .map(this::toDepartmentResponse).toList();
         return new PageImpl<>(departmentResponseList,pageable,departments.getTotalElements());
@@ -128,8 +168,14 @@ public class DepartmentService {
     public Page<DepartmentResponse> getAllDepartment(Integer page, Integer size){
         Pageable pageable = PageRequest.of(page,size,Sort.by("deptNo").ascending());
         Page<Department> departments = departmentRepository.findAll(pageable);
+        List<Department> departmentList = departments.getContent();
+        for (int i = 0; i < departmentList.size(); i++) {
+            Department department = departmentList.get(i);
+            addLink(department);
+        }
         List<DepartmentResponse> departmentResponseList = departments.getContent().stream()
                 .map(this::toDepartmentResponse).toList();
+
         return new PageImpl<>(departmentResponseList,pageable,departments.getTotalElements());
     }
 

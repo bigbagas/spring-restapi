@@ -1,10 +1,8 @@
 package com.bagas.springrestapi.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
 
@@ -14,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "departments")
-public class Department {
+public class Department extends RepresentationModel<Department> {
 
     @Id
     @Column(name = "dept_no", length = 4)

@@ -10,14 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/api")
+@RequestMapping(path = "/api/departments")
 public class DepartmentController {
 
     @Autowired
     private DepartmentService departmentService;
 
     @PostMapping(
-            path = "/departments",
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
     private WebResponse<String> registerDepartment(@RequestBody RegisterDepartmentRequest request){
@@ -28,7 +27,7 @@ public class DepartmentController {
     }
 
     @PutMapping(
-            path = "/departments/{deptNo}",
+            path = "/{deptNo}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -40,7 +39,7 @@ public class DepartmentController {
     }
 
     @GetMapping(
-            path = "/departments/{deptNo}",
+            path = "/{deptNo}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     private WebResponse<DepartmentResponse> getDepartmentByDeptNo(@PathVariable String deptNo){
@@ -51,7 +50,7 @@ public class DepartmentController {
     }
 
     @DeleteMapping(
-            path = "/departments/{deptNo}",
+            path = "/{deptNo}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     private WebResponse<String> deleteDepartment(@PathVariable String deptNo){
@@ -62,7 +61,7 @@ public class DepartmentController {
     }
 
     @GetMapping(
-            path = "/departments/search",
+            path = "/search",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public WebResponse<List<DepartmentResponse>> searchDepartment(@RequestParam(value = "keyword",required = false)String keyword,
@@ -80,7 +79,7 @@ public class DepartmentController {
     }
 
     @GetMapping(
-            path = "/departments",
+
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public WebResponse<List<DepartmentResponse>> getAllDepartment(@RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
