@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.Date;
 
@@ -14,7 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name = "dept_emps")
-public class DeptEmp {
+public class DeptEmp extends RepresentationModel<DeptEmp> {
 
 
     @Temporal(TemporalType.DATE)

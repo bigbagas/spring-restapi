@@ -1,5 +1,8 @@
 package com.bagas.springrestapi.service;
 
+import com.bagas.springrestapi.controller.DepartmentController;
+import com.bagas.springrestapi.controller.DeptEmpController;
+import com.bagas.springrestapi.controller.EmployeeController;
 import com.bagas.springrestapi.entity.Department;
 import com.bagas.springrestapi.entity.DeptEmp;
 import com.bagas.springrestapi.entity.Employee;
@@ -13,6 +16,7 @@ import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class DeptEmpService {
@@ -77,24 +84,36 @@ public class DeptEmpService {
 
         Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
         Page<DeptEmp> deptEmps = deptEmpRepository.findByDepartment_DeptNo(deptNo,pageable);
+        List<DeptEmp> deptEmpList = deptEmps.getContent();
+        for (int i = 0; i < deptEmpList.size(); i++) {
+            DeptEmp deptEmp = deptEmpList.get(i);
+            addLink(deptEmp);
+        }
         List<DeptEmpResponse> deptEmpResponseList = deptEmps.stream()
                 .map(this::toDeptEmpResponse).toList();
         return new PageImpl<>(deptEmpResponseList,pageable,deptEmps.getTotalElements());
     }
 
     private DeptEmpResponse toDeptEmpResponse(DeptEmp deptEmp){
-        return DeptEmpResponse.builder()
+        DeptEmpResponse deptEmpResponse = DeptEmpResponse.builder()
                 .deptNo(deptEmp.getDepartment().getDeptNo())
                 .empNo(deptEmp.getEmpNo())
                 .fromDate(deptEmp.getFromDate())
                 .toDate(deptEmp.getToDate())
                 .build();
+        deptEmpResponse.add(deptEmp.getLinks());
+        return deptEmpResponse;
     }
 
     @Transactional(readOnly = true)
     public Page<DeptEmpResponse> getAllDeptEmp(Integer page, Integer size){
         Pageable pageable = PageRequest.of(page,size, Sort.by("empNo").ascending());
         Page<DeptEmp> deptEmps = deptEmpRepository.findAll(pageable);
+        List<DeptEmp> deptEmpList = deptEmps.getContent();
+        for (int i = 0; i < deptEmpList.size(); i++) {
+            DeptEmp deptEmp = deptEmpList.get(i);
+            addLink(deptEmp);
+        }
         List<DeptEmpResponse> deptEmpResponseList = deptEmps.stream()
                 .map(this::toDeptEmpResponse).toList();
         return new PageImpl<>(deptEmpResponseList,pageable,deptEmps.getTotalElements());
@@ -110,6 +129,7 @@ public class DeptEmpService {
 
         DeptEmp deptEmp = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found"));
+        addLink(deptEmp);
         return toDeptEmpResponse(deptEmp);
     }
 
@@ -149,6 +169,7 @@ public class DeptEmpService {
         }
 
         deptEmpRepository.save(deptEmp);
+        addLink(deptEmp);
         return toDeptEmpResponse(deptEmp);
     }
 
@@ -163,6 +184,21 @@ public class DeptEmpService {
         DeptEmp deptEmp = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found"));
         deptEmpRepository.delete(deptEmp);
+    }
+
+    private void addLink(DeptEmp deptEmp){
+        Link link = linkTo(methodOn(DeptEmpController.class).getDeptEmpByDeptNoAndEmpNo(deptEmp.getDepartment().getDeptNo(),deptEmp.getEmpNo())).withSelfRel();
+        deptEmp.add(link);
+
+        if (employeeRepository.findById(deptEmp.getEmpNo()).isPresent()){
+            Link linkEmployee = linkTo(methodOn(EmployeeController.class).getEmployeeByEmpNo(deptEmp.getEmpNo())).withRel("employee");
+            deptEmp.add(linkEmployee);
+        }
+
+        if (departmentRepository.findById(deptEmp.getDepartment().getDeptNo()).isPresent()){
+            Link linkDepartment = linkTo(DepartmentController.class).slash(deptEmp.getDepartment().getDeptNo()).withRel("department");
+            deptEmp.add(linkDepartment);
+        }
     }
 
 }
