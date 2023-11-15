@@ -36,6 +36,7 @@ public class TitleService {
     @Transactional
     public void registerTitle(RegisterTitleRequest request) throws ParseException {
         validationService.validate(request);
+        validationService.dateValidation(request.getFromDate(),request.getToDate());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         Employee employee = employeeRepository.employeeByEmpNo(request.getEmpNo())
@@ -65,17 +66,24 @@ public class TitleService {
         Date newFromDate = sdf.parse(request.getFromDate());
         Date newToDate = sdf.parse(request.getToDate());
 
+        String checkFromDate = request.getFromDate();
+        String checkToDate = request.getToDate();
+
         if (Objects.isNull(request.getTitle())){
             newTitle = title.getTitle();
         }
 
         if (Objects.isNull(request.getFromDate())){
             newFromDate = title.getFromDate();
+            checkFromDate = sdf.format(title.getFromDate());
         }
 
         if (Objects.isNull(request.getToDate())){
             newToDate = title.getToDate();
+            checkToDate = sdf.format(title.getToDate());
         }
+
+        validationService.dateValidation(checkFromDate,checkToDate);
 
         titleRepository.updateTitle(empNo,newFromDate,newTitle,newToDate);
 
@@ -84,7 +92,6 @@ public class TitleService {
         updatedTitle.setTitle(newTitle);
         updatedTitle.setFromDate(newFromDate);
         updatedTitle.setToDate(newToDate);
-
         return toTitleResponse(updatedTitle);
     }
 

@@ -36,6 +36,7 @@ public class SalaryService {
     @Transactional
     public void registerSalary(RegisterSalaryRequest request) throws ParseException {
         validationService.validate(request);
+        validationService.dateValidation(request.getFromDate(),request.getToDate());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         Employee employee = employeeRepository.employeeByEmpNo(request.getEmpNo())
@@ -47,21 +48,17 @@ public class SalaryService {
         }
 
         salaryRepository.insertIntoSalary(request.getEmpNo(), request.getSalary(), sdf.parse(request.getFromDate()),sdf.parse(request.getToDate()));
-
-
-
     }
 
     @Transactional(readOnly = true)
     public SalaryResponse getSalaryByEmpNo(Integer empNo){
-
       Employee employee = employeeRepository.employeeByEmpNo(empNo)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee is not found"));
+
         Salary salary = salaryRepository.salaryByEmpNo(empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee Salary is not found"));
 
         return toSalaryResponse(salary);
-
     }
 
     @Transactional(readOnly = true)
@@ -97,17 +94,24 @@ public class SalaryService {
         Date newFromDate = sdf.parse(request.getFromDate());
         Date newToDate = sdf.parse(request.getToDate());
 
+        String checkFromDate = request.getFromDate();
+        String checkToDate = request.getToDate();
+
         if (Objects.isNull(request.getSalary())){
             newSalary = salary.getSalary();
         }
 
         if (Objects.isNull(request.getFromDate())){
+            checkFromDate = sdf.format(salary.getFromDate());
             newFromDate = salary.getFromDate();
         }
 
         if (Objects.isNull(request.getToDate())){
+            checkToDate = sdf.format(salary.getToDate());
             newToDate = salary.getToDate();
         }
+
+        validationService.dateValidation(checkFromDate,checkToDate);
 
         salaryRepository.updateSalary(newSalary,empNo,newFromDate,newToDate);
 
@@ -116,10 +120,7 @@ public class SalaryService {
         updatedSalary.setSalary(newSalary);
         updatedSalary.setFromDate(newFromDate);
         updatedSalary.setToDate(newToDate);
-        System.out.println(updatedSalary.getSalary());
-
         return toSalaryResponse(updatedSalary);
-
     }
 
     @Transactional
