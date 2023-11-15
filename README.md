@@ -39,18 +39,20 @@
       ;
     
 # 3.4 Function Insert Title
-# 3. 4 Function Insert Title
-CREATE OR REPLACE FUNCTION public.insert_title(no_emp integer,
-from_date date, title character varying, to_date date) 
-RETURNS void 
-LANGUAGE plpgsql 
-AS $function$ 
-begin 
-insert into titles(emp_no,from_date,title,to_date)
-values (no_emp, from_date,title, to_date); 
-end; 
+CREATE OR REPLACE FUNCTION public.insert_title(no_emp integer, from_date date, title character varying, to_date date)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+begin
+	
+	insert into titles(emp_no,from_date,title,to_date) 
+	values (no_emp, from_date,title, to_date);
+end;
 $function$
 ;
+
+
+
 
 # 3.5 Function Update Title
 
