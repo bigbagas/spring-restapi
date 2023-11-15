@@ -43,6 +43,7 @@ public class DeptEmpService {
     @Transactional
     public void registerDeptEmp (RegisterDeptEmpRequest request) throws ParseException {
         validationService.validate(request);
+        validationService.dateValidation(request.getFromDate(),request.getToDate());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         Department department = departmentRepository.findById(request.getDeptNo())
@@ -126,13 +127,20 @@ public class DeptEmpService {
         DeptEmp deptEmp = deptEmpRepository.findByDepartment_DeptNoAndAndEmpNo(deptNo,empNo)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Department or Employee is not found"));
 
+        String newFromDate = sdf.format(deptEmp.getFromDate());
+        String newToDate = sdf.format(deptEmp.getToDate());
+
         if (Objects.nonNull(request.getFromDate())){
+            newFromDate = request.getFromDate();
             deptEmp.setFromDate(sdf.parse(request.getFromDate()));
         }
 
         if (Objects.nonNull(request.getToDate())){
+            newToDate = request.getToDate();
             deptEmp.setToDate(sdf.parse(request.getToDate()));
         }
+
+        validationService.dateValidation(newFromDate,newToDate);
 
         if (Objects.nonNull(request.getDeptNo())){
             Department newDept = departmentRepository.findById(request.getDeptNo())
