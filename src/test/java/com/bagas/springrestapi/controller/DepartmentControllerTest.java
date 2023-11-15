@@ -64,6 +64,7 @@ class DepartmentControllerTest {
         request.setDeptNo("TEST");
         request.setDeptName("TEST");
 
+        //success
         mockMvc.perform(
                 post("/api/departments")
                 .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -92,6 +93,7 @@ class DepartmentControllerTest {
         requestDeptNoTooLong.setDeptNo("TEST. This Dept No is too long");
         requestDeptNoTooLong.setDeptName("TEST");
 
+        // dept no is too long
         mockMvc.perform(
                 post("/api/departments")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -108,6 +110,7 @@ class DepartmentControllerTest {
             assertNull(departmentTest);
         });
 
+        // dept name is too long
         RegisterDepartmentRequest requestDeptNameMoreThan40 = new RegisterDepartmentRequest();
         requestDeptNameMoreThan40.setDeptNo("TEST");
         requestDeptNameMoreThan40.setDeptName("TEST. This dept name is more than 40 character. This dept name is more than 40 character");
@@ -117,6 +120,26 @@ class DepartmentControllerTest {
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(requestDeptNameMoreThan40))
+        ).andExpectAll(
+                status().isBadRequest()
+        ).andDo(result -> {
+            WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getErrors());
+            assertNull(response.getData());
+            Department departmentTest = departmentRepository.findById(requestDeptNoTooLong.getDeptNo()).orElse(null);
+            assertNull(departmentTest);
+        });
+
+        // dept name is null
+        RegisterDepartmentRequest requestDeptNameNull = new RegisterDepartmentRequest();
+        requestDeptNameNull.setDeptNo("TEST");
+
+        mockMvc.perform(
+                post("/api/departments")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(requestDeptNameNull))
         ).andExpectAll(
                 status().isBadRequest()
         ).andDo(result -> {
@@ -142,6 +165,7 @@ class DepartmentControllerTest {
         request.setDeptNo("TEST");
         request.setDeptName("TEST");
 
+        // check duplicate
         mockMvc.perform(
                 post("/api/departments")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -170,6 +194,7 @@ class DepartmentControllerTest {
         departmentRepository.save(department);
         System.out.println(department.getDeptNo());
 
+        // get by dept no is success
         mockMvc.perform(
                 get("/api/departments/TEST")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -201,6 +226,7 @@ class DepartmentControllerTest {
         departmentRepository.save(department);
         System.out.println(department.getDeptNo());
 
+        // not found (deptNo = NOTFOUND cannot be found Departments)
         mockMvc.perform(
                 get("/api/departments/NOTFOUND")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -230,6 +256,7 @@ class DepartmentControllerTest {
         request.setDeptName("NEW DEPT");
         System.out.println("req "+request.getDeptName());
 
+        // update success
         mockMvc.perform(
                 put("/api/departments/TEST")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -264,13 +291,12 @@ class DepartmentControllerTest {
         UpdateDepartmentRequest request = new UpdateDepartmentRequest();
         request.setDeptName("NEW DEPT");
 
+        // not found (deptNo = NOTFOUND cannot be found Departments)
         mockMvc.perform(
                 put("/api/departments/NOTFOUND")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
-
-
         ).andExpectAll(
                 status().isNotFound()
         ).andDo(result -> {
@@ -293,6 +319,7 @@ class DepartmentControllerTest {
         department.setDeptName("TEST");
         departmentRepository.save(department);
 
+        // update. deptName is too long (more than 40)
         UpdateDepartmentRequest requestTooLong = new UpdateDepartmentRequest();
         requestTooLong.setDeptName("NEW DEPT is too long. NEW DEPT is too long. NEW DEPT is too long. NEW DEPT is too long");
 
@@ -322,6 +349,7 @@ class DepartmentControllerTest {
         department.setDeptName("TEST");
         departmentRepository.save(department);
 
+        //delete success
         mockMvc.perform(
                 delete("/api/departments/TEST")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -346,6 +374,7 @@ class DepartmentControllerTest {
         department.setDeptName("TEST");
         departmentRepository.save(department);
 
+        // not found (deptNo = NOTFOUND cannot be found Departments)
         mockMvc.perform(
                 delete("/api/departments/NOTFOUND")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -374,6 +403,7 @@ class DepartmentControllerTest {
 
         }
 
+        // success get all Departments
         mockMvc.perform(
                 get("/api/departments")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -402,6 +432,7 @@ class DepartmentControllerTest {
 
         }
 
+        // not found (dept name with keyword = NOTFOUND cannot be found Departments)
         mockMvc.perform(
                 get("/api/departments/search?keyword=NOTFOUND")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -439,6 +470,7 @@ class DepartmentControllerTest {
 
         }
 
+        // success. if keyword is null, it will get all data
         mockMvc.perform(
                 get("/api/departments/search?keyword")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -456,6 +488,7 @@ class DepartmentControllerTest {
             assertEquals(200,response.getPaging().getSize());
         });
 
+        // search K is success
         mockMvc.perform(
                 get("/api/departments/search?keyword=K")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -473,6 +506,7 @@ class DepartmentControllerTest {
             assertEquals(100,response.getPaging().getSize());
         });
 
+        // success.
         mockMvc.perform(
                 get("/api/departments/search?keyword=DAta")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
