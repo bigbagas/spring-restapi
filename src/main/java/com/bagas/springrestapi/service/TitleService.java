@@ -1,5 +1,7 @@
 package com.bagas.springrestapi.service;
 
+import com.bagas.springrestapi.controller.EmployeeController;
+import com.bagas.springrestapi.controller.TitleController;
 import com.bagas.springrestapi.entity.Employee;
 import com.bagas.springrestapi.entity.Title;
 import com.bagas.springrestapi.model.RegisterTitleRequest;
@@ -9,6 +11,7 @@ import com.bagas.springrestapi.repository.EmployeeRepository;
 import com.bagas.springrestapi.repository.TitleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class TitleService {
@@ -92,16 +98,20 @@ public class TitleService {
         updatedTitle.setTitle(newTitle);
         updatedTitle.setFromDate(newFromDate);
         updatedTitle.setToDate(newToDate);
+        addLink(updatedTitle);
+
         return toTitleResponse(updatedTitle);
     }
 
     private TitleResponse toTitleResponse(Title title){
-        return TitleResponse.builder()
+        TitleResponse titleResponse = TitleResponse.builder()
                 .empNo(title.getEmpNo())
                 .title(title.getTitle())
                 .fromDate(title.getFromDate())
                 .toDate(title.getToDate())
                 .build();
+        titleResponse.add(title.getLinks());
+        return titleResponse;
     }
 
     @Transactional(readOnly = true)
@@ -109,6 +119,7 @@ public class TitleService {
         Title title = titleRepository.titleByEmpNo(empNo)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Employee Title is not found"));
 
+        addLink(title);
         return toTitleResponse(title);
     }
 
@@ -128,6 +139,11 @@ public class TitleService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("emp_no").ascending());
 
         Page<Title> titles = titleRepository.allSalaryWithPageable(pageable);
+        List<Title> titleList = titles.getContent();
+        for (int i = 0; i < titleList.size(); i++) {
+            Title title = titleList.get(i);
+            addLink(title);
+        }
         List<TitleResponse> titleResponseList = titles.getContent().stream()
                 .map(this::toTitleResponse).toList();
         return new PageImpl<>(titleResponseList,pageable,titles.getTotalElements());
@@ -143,10 +159,24 @@ public class TitleService {
         }else {
             titles = titleRepository.allSalaryWithPageable(pageable);
         }
+        List<Title> titleList = titles.getContent();
+        for (int i = 0; i < titleList.size(); i++) {
+            Title title = titleList.get(i);
+            addLink(title);
+        }
 
         List<TitleResponse> titleResponseList = titles.getContent().stream()
                 .map(this::toTitleResponse).toList();
         return new PageImpl<>(titleResponseList,pageable,titles.getTotalElements());
     }
 
+    private void addLink(Title title){
+        Link link = linkTo(methodOn(TitleController.class).getTitleByEmpNo(title.getEmpNo())).withSelfRel();
+        title.add(link);
+
+        if (employeeRepository.findById(title.getEmpNo()).isPresent()){
+            Link linkEmployee = linkTo(methodOn(EmployeeController.class).getEmployeeByEmpNo(title.getEmpNo())).withRel("employee");
+            title.add(linkEmployee);
+        }
+    }
 }
