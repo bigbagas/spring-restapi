@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.Date;
 
@@ -13,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Data
-public class DeptManagerResponse {
+public class DeptManagerResponse extends RepresentationModel<DeptManagerResponse> {
 
     private String deptNo;
 
