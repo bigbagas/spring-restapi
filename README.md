@@ -98,5 +98,5 @@
 7. Jika running skenario satu per satu maka test nya dapat berjalan dengan lancar
 
 # Documentation
-1. Documentasi Colection Postman
+1. Documentasi Colection Postman di https://drive.google.com/file/d/1QddlqDMB8RZVDWBICSLODpExN0RY-3ac/view?usp=sharing
 2. Lewat Swagger ui, yang dapat di akses di http://localhost:8080/swagger-ui/index.html
