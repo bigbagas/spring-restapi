@@ -6,11 +6,15 @@ import com.bagas.springrestapi.service.SalaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(path = "/api")
@@ -26,9 +30,12 @@ public class SalaryController {
     )
     public WebResponse<String> registerSalary(@RequestBody RegisterSalaryRequest request) throws ParseException {
         salaryService.registerSalary(request);
-        return WebResponse.<String>builder()
+        WebResponse<String> webResponse = WebResponse.<String>builder()
                 .data("OK")
                 .build();
+        Link selfLink = linkTo(methodOn(SalaryController.class).registerSalary(request)).withSelfRel();
+        webResponse.add(selfLink);
+        return webResponse;
     }
 
     @GetMapping(
@@ -37,9 +44,13 @@ public class SalaryController {
     )
     public WebResponse<SalaryResponse> getSalaryByEmpNo(@PathVariable("empNo")Integer empNo){
         SalaryResponse salaryResponse = salaryService.getSalaryByEmpNo(empNo);
-        return WebResponse.<SalaryResponse>builder()
+        WebResponse<SalaryResponse> webResponse =WebResponse.<SalaryResponse>builder()
                 .data(salaryResponse)
                 .build();
+        Link selfLink = linkTo(methodOn(SalaryController.class).getSalaryByEmpNo(empNo)).withSelfRel();
+        webResponse.add(selfLink);
+        return webResponse;
+
     }
 
     @GetMapping(
@@ -49,15 +60,16 @@ public class SalaryController {
     public WebResponse<List<SalaryResponse>> getAllSalary(@RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
                                                           @RequestParam(value = "size",required = false,defaultValue = "10")Integer size){
         Page<SalaryResponse> salaryResponses = salaryService.getAllSalary(page,size);
-
-
-        return WebResponse.<List<SalaryResponse>>builder()
+        WebResponse<List<SalaryResponse>> webResponse = WebResponse.<List<SalaryResponse>>builder()
                 .data(salaryResponses.getContent())
                 .paging(PagingResponse.builder()
                         .currentPage(salaryResponses.getNumber())
                         .totalPage(salaryResponses.getTotalPages())
                         .size((int) salaryResponses.getTotalElements()).build())
                 .build();
+        Link selfLink = linkTo(methodOn(SalaryController.class).getAllSalary(page, size)).withSelfRel();
+        webResponse.add(selfLink);
+        return webResponse;
     }
 
     @PutMapping(
@@ -67,9 +79,12 @@ public class SalaryController {
     public WebResponse<SalaryResponse> updateSalary(@PathVariable("empNo")Integer empNo,
                                                     @RequestBody UpdateSalaryRequest request) throws ParseException {
         SalaryResponse salaryResponse = salaryService.updateSalary(empNo,request);
-        return WebResponse.<SalaryResponse>builder()
+        WebResponse<SalaryResponse> webResponse = WebResponse.<SalaryResponse>builder()
                 .data(salaryResponse)
                 .build();
+        Link selfLink = linkTo(methodOn(SalaryController.class).updateSalary(empNo, request)).withSelfRel();
+        webResponse.add(selfLink);
+        return webResponse;
     }
 
     @DeleteMapping(
@@ -78,9 +93,12 @@ public class SalaryController {
     )
     public WebResponse<String> deleteSalary(@PathVariable("empNo")Integer empNo){
         salaryService.deleteSalary(empNo);
-        return WebResponse.<String>builder()
+        WebResponse<String> webResponse = WebResponse.<String>builder()
                 .data("OK")
                 .build();
+        Link selfLink = linkTo(methodOn(SalaryController.class).deleteSalary(empNo)).withSelfRel();
+        webResponse.add(selfLink);
+        return webResponse;
     }
 
     @GetMapping(
@@ -91,7 +109,7 @@ public class SalaryController {
                                                           @RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
                                                           @RequestParam(value = "size",required = false,defaultValue = "10") Integer size){
         Page<SalaryResponse> salaryResponses = salaryService.searchSalary(keyword,page,size);
-        return WebResponse.<List<SalaryResponse>>builder()
+        WebResponse<List<SalaryResponse>> webResponse = WebResponse.<List<SalaryResponse>>builder()
                 .data(salaryResponses.getContent())
                 .paging(PagingResponse.builder()
                         .currentPage(salaryResponses.getNumber())
@@ -99,6 +117,10 @@ public class SalaryController {
                         .size((int) salaryResponses.getTotalElements())
                         .build())
                 .build();
+        Link selfLink = linkTo(methodOn(SalaryController.class).searchSalary(keyword,page,size)).withSelfRel();
+        webResponse.add(selfLink);
+        return webResponse;
+
 
     }
 }
