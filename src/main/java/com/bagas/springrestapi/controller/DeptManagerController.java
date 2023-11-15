@@ -127,10 +127,12 @@ public class DeptManagerController {
                                                               @PathVariable("empNo")Integer empNo,
                                                               @RequestBody UpdateDeptManagerRequest request) throws ParseException {
         DeptManagerResponse deptManagerResponse = deptManagerService.updateDeptManager(deptNo,empNo,request);
-
-        return WebResponse.<DeptManagerResponse>builder()
+        WebResponse<DeptManagerResponse> webResponse = WebResponse.<DeptManagerResponse>builder()
                 .data(deptManagerResponse)
                 .build();
+        Link selfLink = linkTo(methodOn(DeptManagerController.class).updateDeptManager(deptNo,empNo,request)).withSelfRel();
+        webResponse.add(selfLink);
+        return webResponse;
     }
 
 }
