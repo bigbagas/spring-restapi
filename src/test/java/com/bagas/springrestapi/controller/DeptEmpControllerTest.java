@@ -98,6 +98,7 @@ class DeptEmpControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertEquals("OK", response.getData());
+            assertNotNull(response.getLinks());
 
             DeptEmp deptEmpTest = deptEmpRepository.findById(request.getEmpNo()).orElse(null);
             assertNotNull(deptEmpTest);
@@ -389,6 +390,7 @@ class DeptEmpControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNotNull(response.getPaging());
+            assertNotNull(response.getLinks());
             assertEquals(10,response.getData().size());
             assertEquals(2,response.getPaging().getTotalPage());
             assertEquals(0,response.getPaging().getCurrentPage());
@@ -503,6 +505,7 @@ class DeptEmpControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNotNull(response.getPaging());
+            assertNotNull(response.getLinks());
             assertEquals(10,response.getData().size());
             assertEquals(2,response.getPaging().getTotalPage());
             assertEquals(0,response.getPaging().getCurrentPage());
@@ -557,6 +560,7 @@ class DeptEmpControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNull(response.getPaging());
+            assertNotNull(response.getLinks());
         });
 
 
@@ -724,6 +728,7 @@ class DeptEmpControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNull(response.getPaging());
+            assertNotNull(response.getLinks());
             DeptEmp deptEmpTest = deptEmpRepository.findById(employee.getEmpNo()).orElse(null);
             assertNotNull(deptEmpTest);
             assertEquals(deptEmpTest.getDepartment().getDeptNo(),request.getDeptNo());
@@ -1017,6 +1022,7 @@ class DeptEmpControllerTest {
             assertNotNull(response.getData());
             assertNull(response.getErrors());
             assertNull(response.getPaging());
+            assertNotNull(response.getLinks());
 
             assertEquals("OK",response.getData());
 
