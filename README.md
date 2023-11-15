@@ -55,35 +55,34 @@
 
 
 # 3.5 Function Update Title
-
-    CREATE OR REPLACE FUNCTION public.update_title(no_emp integer, new_from_date date,
-     new_title character varying, new_to_date date)
-    RETURNS void
-   LANGUAGE plpgsql
-    AS $function$
-    begin
-	  update titles 
-	  set title = new_title,
+	CREATE OR REPLACE FUNCTION public.update_title(no_emp integer, new_from_date date,
+     	new_title character varying, new_to_date date)
+    	RETURNS void
+   	LANGUAGE plpgsql
+    	AS $function$
+    	begin
+	update titles 
+	set title = new_title,
 	from_date = new_from_date ,
-	  to_date = new_to_date
+	to_date = new_to_date
 	where emp_no = no_emp; 	
-  end;
-  $function$
-  ;
+ 	end;
+  	$function$
+  	;
 
 # 3.6 Function Delete Title
 
-CREATE OR REPLACE FUNCTION public.delete_title(no_emp integer)
- RETURNS void
- LANGUAGE plpgsql
-AS $function$
-begin
+	CREATE OR REPLACE FUNCTION public.delete_title(no_emp integer)
+ 	RETURNS void
+ 	LANGUAGE plpgsql
+	AS $function$
+	begin
 	delete from titles
 	where emp_no = no_emp;
-	
-end;
-$function$
-;
+		
+	end;
+	$function$
+	;
 
 
 4. Jika sudah maka running aplikasi springboot dan aplikasi akan berjalan di url: localhost:8080
