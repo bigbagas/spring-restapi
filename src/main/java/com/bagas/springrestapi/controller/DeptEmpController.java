@@ -4,11 +4,15 @@ import com.bagas.springrestapi.model.*;
 import com.bagas.springrestapi.service.DeptEmpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(path = "/api")
@@ -24,9 +28,13 @@ public class DeptEmpController {
     )
     public WebResponse<String> registerDeptEmp(@RequestBody RegisterDeptEmpRequest request) throws ParseException {
         deptEmpService.registerDeptEmp(request);
-        return WebResponse.<String>builder()
+        WebResponse<String> webResponse = WebResponse.<String>builder()
                 .data("OK")
                 .build();
+
+        Link selfLink = linkTo(methodOn(DeptEmpController.class).registerDeptEmp(request)).withSelfRel();
+        webResponse.add(selfLink);
+        return webResponse;
     }
 
     @GetMapping(
@@ -37,7 +45,7 @@ public class DeptEmpController {
                                                                  @RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
                                                                  @RequestParam(value = "size",required = false,defaultValue = "10")Integer size){
         Page<DeptEmpResponse> deptEmpResponses = deptEmpService.getDeptEmpByDeptNo(deptNo,page,size);
-        return WebResponse.<List<DeptEmpResponse>>builder()
+        WebResponse<List<DeptEmpResponse>> webResponse = WebResponse.<List<DeptEmpResponse>>builder()
                 .data(deptEmpResponses.getContent())
                 .paging(PagingResponse.builder()
                         .currentPage(deptEmpResponses.getNumber())
@@ -45,6 +53,9 @@ public class DeptEmpController {
                         .size((int) deptEmpResponses.getTotalElements())
                         .build())
                 .build();
+        Link selfLink = linkTo(methodOn(DeptEmpController.class).getDeptEmpByDeptNo(deptNo,page,size)).withSelfRel();
+        webResponse.add(selfLink);
+        return webResponse;
     }
 
     @GetMapping(
@@ -54,7 +65,8 @@ public class DeptEmpController {
     public WebResponse<List<DeptEmpResponse>> getAllDeptEmp(@RequestParam(value = "page",required = false,defaultValue = "0")Integer page,
                                                             @RequestParam(value = "size",required = false,defaultValue = "10")Integer size){
         Page<DeptEmpResponse> deptEmpResponses = deptEmpService.getAllDeptEmp(page,size);
-        return WebResponse.<List<DeptEmpResponse>>builder()
+
+        WebResponse<List<DeptEmpResponse>> webResponse = WebResponse.<List<DeptEmpResponse>>builder()
                 .data(deptEmpResponses.getContent())
                 .paging(PagingResponse.builder()
                         .currentPage(deptEmpResponses.getNumber())
@@ -62,6 +74,9 @@ public class DeptEmpController {
                         .size((int) deptEmpResponses.getTotalElements())
                         .build())
                 .build();
+        Link selfLink = linkTo(methodOn(DeptEmpController.class).getAllDeptEmp(page,size)).withSelfRel();
+        webResponse.add(selfLink);
+        return webResponse;
     }
 
     @GetMapping(
@@ -71,9 +86,12 @@ public class DeptEmpController {
     public WebResponse<DeptEmpResponse> getDeptEmpByDeptNoAndEmpNo(@PathVariable("deptNo") String deptNo,
                                                                    @PathVariable("empNo")Integer empNo){
         DeptEmpResponse deptEmpResponse = deptEmpService.deptEmpByDeptNoAndEmpNo(deptNo,empNo);
-        return WebResponse.<DeptEmpResponse>builder()
+        WebResponse<DeptEmpResponse> webResponse = WebResponse.<DeptEmpResponse>builder()
                 .data(deptEmpResponse)
                 .build();
+        Link selfLink = linkTo(methodOn(DeptEmpController.class).getDeptEmpByDeptNoAndEmpNo(deptNo,empNo)).withSelfRel();
+        webResponse.add(selfLink);
+        return webResponse;
     }
 
     @PutMapping(
@@ -84,9 +102,12 @@ public class DeptEmpController {
                                              @PathVariable("empNo")Integer empNo,
                                              @RequestBody UpdateDeptEmpRequest request) throws ParseException {
         DeptEmpResponse deptEmpResponse = deptEmpService.updateDeptEmp(deptNo,empNo,request);
-        return WebResponse.<DeptEmpResponse>builder()
+        WebResponse<DeptEmpResponse> webResponse = WebResponse.<DeptEmpResponse>builder()
                 .data(deptEmpResponse)
                 .build();
+        Link selfLink = linkTo(methodOn(DeptEmpController.class).updateDeptEmp(deptNo,empNo,request)).withSelfRel();
+        webResponse.add(selfLink);
+        return webResponse;
     }
 
     @DeleteMapping(
@@ -96,9 +117,12 @@ public class DeptEmpController {
     public WebResponse<String> deleteDeptEmp(@PathVariable("deptNo")String deptNo,
                                              @PathVariable("empNo")Integer empNo){
         deptEmpService.deleteDeptEmp(deptNo,empNo);
-        return WebResponse.<String>builder()
+        WebResponse<String> webResponse = WebResponse.<String>builder()
                 .data("OK")
                 .build();
+        Link selfLink = linkTo(methodOn(DeptEmpController.class).deleteDeptEmp(deptNo,empNo)).withSelfRel();
+        webResponse.add(selfLink);
+        return webResponse;
     }
 
 }
